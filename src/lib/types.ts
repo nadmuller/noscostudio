@@ -15,3 +15,22 @@ export interface AllowedUser {
   role: "owner" | "viewer";
   created_at?: string;
 }
+
+export interface TimelineFilters {
+  group_names?: string[];
+  statuses?: ("done" | "progress" | "pending")[];
+  date_from?: string;
+  date_to?: string;
+}
+
+export interface Timeline {
+  id: string;
+  name: string;
+  slug: string;
+  filters: TimelineFilters;
+  is_public: boolean;
+  owner_email: string;
+  sort_order: number;
+  created_at?: string;
+  updated_at?: string;
+}

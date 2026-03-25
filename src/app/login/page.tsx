@@ -29,7 +29,7 @@ export default function LoginPage({
             marginBottom: 8,
           }}
         >
-          Ortus
+          Nosco Studio
         </h1>
         <p
           style={{
@@ -40,7 +40,7 @@ export default function LoginPage({
             color: "#a19891",
           }}
         >
-          Cronograma de Lancamento
+          Gestão de Projetos
         </p>
       </div>
 

@@ -29,10 +29,11 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Allow login page and auth callback without auth
+  // Allow login page, auth callback, and public timelines without auth
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/auth/callback");
+    request.nextUrl.pathname.startsWith("/auth/callback") ||
+    request.nextUrl.pathname.startsWith("/p/");
 
   if (!user && !isAuthRoute) {
     const url = request.nextUrl.clone();

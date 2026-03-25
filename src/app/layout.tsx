@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ortus — Cronograma",
-  description: "Cronograma de lancamento — Nosco Studio",
+  title: "Nosco Studio",
+  description: "Gestão de projetos — Nosco Studio",
 };
 
 export default function RootLayout({

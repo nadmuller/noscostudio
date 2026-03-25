@@ -18,6 +18,6 @@ body {
   background: var(--cream);
   color: var(--dark);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
