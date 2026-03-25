@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #f3f2f3;
+  --sand: #cec9c6;
+  --stone: #a19891;
+  --dark: #22221e;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--cream);
+  color: var(--dark);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}

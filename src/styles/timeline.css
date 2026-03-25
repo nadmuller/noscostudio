@@ -1,0 +1,293 @@
+/* ── TIMELINE CSS (preservado do original) ────────────────────────── */
+
+.tl-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--cream);
+}
+
+/* ── HEADER ────────────────────────────────────────────── */
+.tl-header {
+  flex-shrink: 0;
+  padding: 32px 56px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--sand);
+  background: var(--cream);
+}
+
+.tl-header h1 {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dark);
+}
+
+.tl-header .sub {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-top: 5px;
+}
+
+.tl-header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.legend {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+.ld {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ld-done     { background: var(--dark); }
+.ld-progress { background: var(--stone); }
+.ld-pending  { background: var(--cream); border: 1.5px solid var(--stone); }
+
+/* ── SCROLL ────────────────────────────────────────────── */
+.tl-scroll {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--cream);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sand) transparent;
+}
+.tl-scroll::-webkit-scrollbar { height: 2px; }
+.tl-scroll::-webkit-scrollbar-track { background: transparent; }
+.tl-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+
+/* ── CANVAS ────────────────────────────────────────────── */
+.tl-canvas {
+  position: relative;
+  background: var(--cream);
+}
+
+/* ── MONTH COLUMNS ─────────────────────────────────────── */
+.mcol {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: transparent;
+}
+.mcol.alt { background: #e8e6e4; }
+
+.mcol-line {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: #aaa9a0;
+  z-index: 2;
+}
+
+/* ── AXIS ──────────────────────────────────────────────── */
+.axis {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: #b5b5ad;
+  display: flex;
+  z-index: 10;
+  overflow: visible;
+}
+
+.acell {
+  position: relative;
+  height: 100%;
+  overflow: visible;
+}
+
+.acell .mn {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dark);
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ── PINS ──────────────────────────────────────────────── */
+.pin {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+  z-index: 20;
+  cursor: pointer;
+}
+
+/* ABOVE: plabel -> pdate -> pstem -> pdot */
+.pin.above .plabel { order: 1; margin-bottom: 4px; }
+.pin.above .pdate  { order: 2; margin-bottom: 8px; }
+.pin.above .pstem  { order: 3; }
+.pin.above .pdot   { order: 4; }
+
+/* BELOW: pdot -> pstem -> pdate -> plabel */
+.pin.below .pdot   { order: 1; }
+.pin.below .pstem  { order: 2; }
+.pin.below .pdate  { order: 3; margin-top: 8px; }
+.pin.below .plabel { order: 4; margin-top: 4px; }
+
+.pdot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform .15s ease;
+}
+.pin:hover .pdot { transform: scale(2); }
+
+.pstem {
+  width: 1px;
+  background: var(--stone);
+  flex-shrink: 0;
+}
+
+.plabel {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.pg {
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone);
+  white-space: nowrap;
+  display: block;
+}
+
+.pn {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--dark);
+  white-space: nowrap;
+  display: block;
+  margin-top: 2px;
+}
+
+.pdate {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  text-align: center;
+  display: block;
+}
+
+/* dot status colors */
+.s-done     { background: var(--dark); }
+.s-progress { background: var(--stone); }
+.s-pending  { background: var(--cream); border: 1.5px solid var(--stone); }
+
+/* ── TODAY PIN ─────────────────────────────────────────── */
+.today-pin {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+  z-index: 30;
+  pointer-events: none;
+}
+.today-pill {
+  background: var(--dark);
+  color: var(--cream);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  margin-bottom: 5px;
+}
+.today-stem {
+  width: 1px;
+  background: var(--dark);
+}
+.today-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--dark);
+}
+
+/* ── TOOLTIP ───────────────────────────────────────────── */
+.status-tooltip {
+  display: none;
+  position: fixed;
+  background: var(--dark);
+  color: var(--cream);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+  z-index: 9999;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+/* ── FOOTER ────────────────────────────────────────────── */
+.tl-footer {
+  flex-shrink: 0;
+  padding: 16px 56px;
+  border-top: 1px solid var(--sand);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--cream);
+}
+.fb { font-size: 8px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--sand); }
+.fm { font-size: 9px; font-weight: 300; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); }
+
+/* ── ADD BUTTON ────────────────────────────────────────── */
+.add-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--stone);
+  background: transparent;
+  color: var(--stone);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.add-btn:hover {
+  border-color: var(--dark);
+  color: var(--dark);
+}
