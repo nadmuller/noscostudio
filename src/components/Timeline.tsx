@@ -11,6 +11,18 @@ interface TimelineProps {
   readOnly?: boolean;
   timelineName?: string;
   shareToggle?: ReactNode;
+  extraHeaderRight?: ReactNode;
+}
+
+const STATUS_LABELS: Record<string, string> = {
+  done: "Concluída",
+  progress: "Em andamento",
+  pending: "Não iniciado",
+};
+
+function formatDate(d: string) {
+  const [y, m, day] = d.split("-");
+  return `${day}/${m}`;
 }
 
 export function Timeline({
@@ -18,6 +30,7 @@ export function Timeline({
   readOnly = false,
   timelineName,
   shareToggle,
+  extraHeaderRight,
 }: TimelineProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -75,6 +88,13 @@ export function Timeline({
     ? `${timelineName} — Cronograma`
     : "Ortus — Cronograma de Lançamento";
 
+  // Group tasks by group_name for the activity list
+  const grouped = tasks.reduce<Record<string, Task[]>>((acc, task) => {
+    if (!acc[task.group_name]) acc[task.group_name] = [];
+    acc[task.group_name].push(task);
+    return acc;
+  }, {});
+
   return (
     <div className="tl-page">
       <header className="tl-header">
@@ -86,6 +106,7 @@ export function Timeline({
         </div>
         <div className="tl-header-right">
           {shareToggle}
+          {extraHeaderRight}
           <div className="legend">
             <div className="li">
               <span className="ld ld-done"></span>Concluída
@@ -118,6 +139,35 @@ export function Timeline({
         <div className="tl-canvas" ref={canvasRef}></div>
       </div>
 
+      {/* Activity list below timeline */}
+      <div className="tl-activities">
+        <h2>Atividades</h2>
+        {Object.entries(grouped).map(([group, groupTasks]) => (
+          <div key={group} className="tl-act-group">
+            <div className="tl-act-group-name">{group}</div>
+            <ul className="tl-act-list">
+              {groupTasks
+                .sort((a, b) => a.due_date.localeCompare(b.due_date))
+                .map((task) => (
+                  <li key={task.id}>
+                    <span
+                      className="tl-act-dot"
+                      style={dotStyle(task.status)}
+                    />
+                    <span className="tl-act-date">
+                      {formatDate(task.due_date)}
+                    </span>
+                    <span className="tl-act-name">{task.name}</span>
+                    <span className="tl-act-status">
+                      {STATUS_LABELS[task.status]}
+                    </span>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
       <footer className="tl-footer">
         <span className="fb">Nosco Studio</span>
         <span className="fm">
@@ -138,4 +188,10 @@ export function Timeline({
       )}
     </div>
   );
+}
+
+function dotStyle(status: string): React.CSSProperties {
+  if (status === "done") return { background: "var(--dark)" };
+  if (status === "progress") return { background: "var(--stone)" };
+  return { background: "var(--cream)", border: "1.5px solid var(--stone)" };
 }

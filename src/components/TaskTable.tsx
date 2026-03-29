@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { TaskEditor } from "./TaskEditor";
 import type { Task } from "@/lib/types";
 
 interface TaskTableProps {
@@ -16,99 +17,30 @@ const STATUS_LABELS: Record<string, string> = {
 
 export function TaskTable({ tasks: initialTasks }: TaskTableProps) {
   const [tasks, setTasks] = useState(initialTasks);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [adding, setAdding] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
 
-  const [editGroup, setEditGroup] = useState("");
-  const [editName, setEditName] = useState("");
-  const [editDate, setEditDate] = useState("");
-  const [editStatus, setEditStatus] = useState<Task["status"]>("pending");
-  const [loading, setLoading] = useState(false);
-
-  const startEdit = useCallback((task: Task) => {
-    setEditingId(task.id);
-    setEditGroup(task.group_name);
-    setEditName(task.name);
-    setEditDate(task.due_date);
-    setEditStatus(task.status);
-    setAdding(false);
+  const handleSave = useCallback((savedTask: Task) => {
+    setTasks((prev) => {
+      const idx = prev.findIndex((t) => t.id === savedTask.id);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = savedTask;
+        return updated;
+      }
+      return [...prev, savedTask];
+    });
+    setEditingTask(null);
+    setIsAdding(false);
   }, []);
 
-  const startAdd = useCallback(() => {
-    setAdding(true);
-    setEditingId(null);
-    setEditGroup("");
-    setEditName("");
-    setEditDate("");
-    setEditStatus("pending");
+  const handleDelete = useCallback((taskId: string) => {
+    setTasks((prev) => prev.filter((t) => t.id !== taskId));
+    setEditingTask(null);
   }, []);
 
-  const cancel = useCallback(() => {
-    setEditingId(null);
-    setAdding(false);
-  }, []);
-
-  const saveEdit = async () => {
-    if (!editGroup.trim() || !editName.trim() || !editDate) return;
-    setLoading(true);
-    const supabase = createClient();
-
-    const { data, error } = await supabase
-      .from("tasks")
-      .update({
-        group_name: editGroup.trim().toUpperCase(),
-        name: editName.trim(),
-        due_date: editDate,
-        status: editStatus,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", editingId!)
-      .select()
-      .single();
-
-    if (!error && data) {
-      setTasks((prev) =>
-        prev.map((t) => (t.id === editingId ? (data as Task) : t))
-      );
-    }
-    setEditingId(null);
-    setLoading(false);
-  };
-
-  const saveNew = async () => {
-    if (!editGroup.trim() || !editName.trim() || !editDate) return;
-    setLoading(true);
-    const supabase = createClient();
-
-    const { data, error } = await supabase
-      .from("tasks")
-      .insert({
-        group_name: editGroup.trim().toUpperCase(),
-        name: editName.trim(),
-        due_date: editDate,
-        status: editStatus,
-        sort_order: tasks.length,
-      })
-      .select()
-      .single();
-
-    if (!error && data) {
-      setTasks((prev) => [...prev, data as Task]);
-    }
-    setAdding(false);
-    setLoading(false);
-  };
-
-  const deleteTask = async (id: string) => {
-    if (!confirm("Excluir esta tarefa?")) return;
-    const supabase = createClient();
-    const { error } = await supabase.from("tasks").delete().eq("id", id);
-    if (!error) {
-      setTasks((prev) => prev.filter((t) => t.id !== id));
-    }
-  };
-
-  const cycleStatus = async (task: Task) => {
+  const cycleStatus = async (e: React.MouseEvent, task: Task) => {
+    e.stopPropagation();
     const order: Task["status"][] = ["pending", "progress", "done"];
     const next = order[(order.indexOf(task.status) + 1) % 3];
     const supabase = createClient();
@@ -126,9 +58,6 @@ export function TaskTable({ tasks: initialTasks }: TaskTableProps) {
     }
   };
 
-  // Get unique groups for visual grouping
-  const groups = [...new Set(tasks.map((t) => t.group_name))];
-
   return (
     <div style={containerStyle}>
       <div style={headerStyle}>
@@ -136,7 +65,13 @@ export function TaskTable({ tasks: initialTasks }: TaskTableProps) {
           <h1 style={titleStyle}>Tarefas</h1>
           <p style={subtitleStyle}>{tasks.length} tarefas cadastradas</p>
         </div>
-        <button onClick={startAdd} style={addBtnStyle}>
+        <button
+          onClick={() => {
+            setIsAdding(true);
+            setEditingTask(null);
+          }}
+          style={addBtnStyle}
+        >
           + Nova tarefa
         </button>
       </div>
@@ -147,169 +82,71 @@ export function TaskTable({ tasks: initialTasks }: TaskTableProps) {
             <tr>
               <th style={thStyle}>Grupo</th>
               <th style={thStyle}>Tarefa</th>
-              <th style={{ ...thStyle, width: 120 }}>Data</th>
-              <th style={{ ...thStyle, width: 130 }}>Status</th>
-              <th style={{ ...thStyle, width: 80 }}></th>
+              <th style={{ ...thStyle, width: 110 }}>Entrega</th>
+              <th style={{ ...thStyle, width: 110 }}>Retorno</th>
+              <th style={{ ...thStyle, width: 140 }}>Status</th>
+              <th style={{ ...thStyle, width: 60 }}></th>
             </tr>
           </thead>
           <tbody>
-            {tasks.map((task) =>
-              editingId === task.id ? (
-                <tr key={task.id} style={editRowStyle}>
-                  <td style={tdStyle}>
-                    <input
-                      value={editGroup}
-                      onChange={(e) => setEditGroup(e.target.value)}
-                      style={cellInputStyle}
-                      placeholder="Grupo"
-                    />
-                  </td>
-                  <td style={tdStyle}>
-                    <input
-                      value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                      style={cellInputStyle}
-                      placeholder="Nome"
-                    />
-                  </td>
-                  <td style={tdStyle}>
-                    <input
-                      type="date"
-                      value={editDate}
-                      onChange={(e) => setEditDate(e.target.value)}
-                      style={cellInputStyle}
-                    />
-                  </td>
-                  <td style={tdStyle}>
-                    <select
-                      value={editStatus}
-                      onChange={(e) =>
-                        setEditStatus(e.target.value as Task["status"])
-                      }
-                      style={cellInputStyle}
-                    >
-                      <option value="pending">Não iniciado</option>
-                      <option value="progress">Em andamento</option>
-                      <option value="done">Concluída</option>
-                    </select>
-                  </td>
-                  <td style={tdStyle}>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      <button
-                        onClick={saveEdit}
-                        disabled={loading}
-                        style={actionBtnStyle}
-                      >
-                        ✓
-                      </button>
-                      <button onClick={cancel} style={actionBtnStyle}>
-                        ✕
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                <tr
-                  key={task.id}
-                  style={rowStyle}
-                  onDoubleClick={() => startEdit(task)}
-                >
-                  <td style={tdStyle}>
-                    <span style={groupBadgeStyle}>{task.group_name}</span>
-                  </td>
-                  <td style={{ ...tdStyle, color: "var(--dark)" }}>
-                    {task.name}
-                  </td>
-                  <td style={tdStyle}>{formatDate(task.due_date)}</td>
-                  <td style={tdStyle}>
-                    <button
-                      onClick={() => cycleStatus(task)}
-                      style={statusBtnStyle(task.status)}
-                    >
-                      <span style={statusDotStyle(task.status)} />
-                      {STATUS_LABELS[task.status]}
-                    </button>
-                  </td>
-                  <td style={tdStyle}>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      <button
-                        onClick={() => startEdit(task)}
-                        style={actionBtnStyle}
-                        title="Editar"
-                      >
-                        ✎
-                      </button>
-                      <button
-                        onClick={() => deleteTask(task.id)}
-                        style={{ ...actionBtnStyle, color: "#c0392b" }}
-                        title="Excluir"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )
-            )}
-            {adding && (
-              <tr style={editRowStyle}>
+            {tasks.map((task) => (
+              <tr
+                key={task.id}
+                style={rowStyle}
+                onClick={() => {
+                  setEditingTask(task);
+                  setIsAdding(false);
+                }}
+              >
                 <td style={tdStyle}>
-                  <input
-                    value={editGroup}
-                    onChange={(e) => setEditGroup(e.target.value)}
-                    style={cellInputStyle}
-                    placeholder="Grupo"
-                    autoFocus
-                  />
+                  <span style={groupBadgeStyle}>{task.group_name}</span>
+                </td>
+                <td style={{ ...tdStyle, color: "var(--dark)" }}>
+                  {task.name}
+                </td>
+                <td style={tdStyle}>{formatDate(task.due_date)}</td>
+                <td style={tdStyle}>
+                  {task.return_date ? formatDate(task.return_date) : "—"}
                 </td>
                 <td style={tdStyle}>
-                  <input
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    style={cellInputStyle}
-                    placeholder="Nome da tarefa"
-                  />
-                </td>
-                <td style={tdStyle}>
-                  <input
-                    type="date"
-                    value={editDate}
-                    onChange={(e) => setEditDate(e.target.value)}
-                    style={cellInputStyle}
-                  />
-                </td>
-                <td style={tdStyle}>
-                  <select
-                    value={editStatus}
-                    onChange={(e) =>
-                      setEditStatus(e.target.value as Task["status"])
-                    }
-                    style={cellInputStyle}
+                  <button
+                    onClick={(e) => cycleStatus(e, task)}
+                    style={statusBtnStyle(task.status)}
                   >
-                    <option value="pending">Não iniciado</option>
-                    <option value="progress">Em andamento</option>
-                    <option value="done">Concluída</option>
-                  </select>
+                    <span style={statusDotStyle(task.status)} />
+                    {STATUS_LABELS[task.status]}
+                  </button>
                 </td>
                 <td style={tdStyle}>
-                  <div style={{ display: "flex", gap: 6 }}>
-                    <button
-                      onClick={saveNew}
-                      disabled={loading}
-                      style={actionBtnStyle}
-                    >
-                      ✓
-                    </button>
-                    <button onClick={cancel} style={actionBtnStyle}>
-                      ✕
-                    </button>
-                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingTask(task);
+                      setIsAdding(false);
+                    }}
+                    style={actionBtnStyle}
+                    title="Editar"
+                  >
+                    ✎
+                  </button>
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>
+
+      {(editingTask || isAdding) && (
+        <TaskEditor
+          task={editingTask}
+          onSave={handleSave}
+          onDelete={handleDelete}
+          onClose={() => {
+            setEditingTask(null);
+            setIsAdding(false);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -376,12 +213,12 @@ const tableWrapStyle: React.CSSProperties = {
 const tableStyle: React.CSSProperties = {
   width: "100%",
   borderCollapse: "collapse",
-  fontSize: 13,
+  fontSize: 14,
 };
 
 const thStyle: React.CSSProperties = {
   textAlign: "left",
-  padding: "12px 16px",
+  padding: "14px 20px",
   fontSize: 9,
   fontWeight: 300,
   letterSpacing: "0.18em",
@@ -392,9 +229,9 @@ const thStyle: React.CSSProperties = {
 };
 
 const tdStyle: React.CSSProperties = {
-  padding: "10px 16px",
+  padding: "14px 20px",
   borderBottom: "1px solid #f0efed",
-  fontSize: 13,
+  fontSize: 14,
   color: "var(--stone)",
   verticalAlign: "middle",
 };
@@ -404,22 +241,6 @@ const rowStyle: React.CSSProperties = {
   transition: "background 0.1s ease",
 };
 
-const editRowStyle: React.CSSProperties = {
-  background: "#faf9f8",
-};
-
-const cellInputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "6px 8px",
-  border: "1px solid var(--sand)",
-  borderRadius: 4,
-  fontSize: 13,
-  color: "var(--dark)",
-  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-  outline: "none",
-  background: "#fff",
-};
-
 const groupBadgeStyle: React.CSSProperties = {
   fontSize: 9,
   fontWeight: 500,
@@ -427,7 +248,7 @@ const groupBadgeStyle: React.CSSProperties = {
   textTransform: "uppercase",
   color: "var(--dark)",
   background: "#edecea",
-  padding: "3px 8px",
+  padding: "4px 10px",
   borderRadius: 3,
 };
 
@@ -435,7 +256,7 @@ function statusBtnStyle(status: string): React.CSSProperties {
   return {
     display: "flex",
     alignItems: "center",
-    gap: 6,
+    gap: 7,
     background: "none",
     border: "none",
     fontSize: 10,

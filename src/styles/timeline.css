@@ -3,14 +3,14 @@
 .tl-page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   background: var(--cream);
 }
 
 /* ── HEADER ────────────────────────────────────────────── */
 .tl-header {
   flex-shrink: 0;
-  padding: 32px 56px 24px;
+  padding: 32px 40px 24px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -69,7 +69,6 @@
 
 /* ── SCROLL ────────────────────────────────────────────── */
 .tl-scroll {
-  flex: 1;
   overflow-x: auto;
   overflow-y: hidden;
   background: var(--cream);
@@ -262,7 +261,7 @@
 /* ── FOOTER ────────────────────────────────────────────── */
 .tl-footer {
   flex-shrink: 0;
-  padding: 16px 56px;
+  padding: 16px 40px;
   border-top: 1px solid var(--sand);
   display: flex;
   justify-content: space-between;
@@ -271,6 +270,86 @@
 }
 .fb { font-size: 8px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--sand); }
 .fm { font-size: 9px; font-weight: 300; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); }
+
+/* ── ACTIVITY LIST ─────────────────────────────────────── */
+.tl-activities {
+  padding: 32px 40px 48px;
+  border-top: 1px solid var(--sand);
+  background: var(--cream);
+}
+
+.tl-activities h2 {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dark);
+  margin-bottom: 20px;
+}
+
+.tl-act-group {
+  margin-bottom: 20px;
+}
+
+.tl-act-group-name {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dark);
+  background: #edecea;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+.tl-act-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tl-act-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 13px;
+  color: var(--dark);
+  border-bottom: 1px solid #f0efed;
+}
+
+.tl-act-list li:last-child {
+  border-bottom: none;
+}
+
+.tl-act-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tl-act-date {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--stone);
+  min-width: 52px;
+}
+
+.tl-act-name {
+  flex: 1;
+}
+
+.tl-act-status {
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
 
 /* ── ADD BUTTON ────────────────────────────────────────── */
 .add-btn {

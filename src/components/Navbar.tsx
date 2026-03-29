@@ -1,17 +1,36 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { ProfileDropdown } from "./ProfileDropdown";
 import type { Timeline } from "@/lib/types";
+import { useState } from "react";
 
 interface NavbarProps {
   timelines: Timeline[];
   userEmail: string;
 }
 
-export function Navbar({ timelines, userEmail }: NavbarProps) {
+export function Navbar({ timelines: initialTimelines, userEmail }: NavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [timelines, setTimelines] = useState(initialTimelines);
+
+  const deleteTimeline = async (e: React.MouseEvent, tl: Timeline) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!confirm(`Excluir a timeline "${tl.name}"?`)) return;
+    const supabase = createClient();
+    const { error } = await supabase.from("timelines").delete().eq("id", tl.id);
+    if (!error) {
+      setTimelines((prev) => prev.filter((t) => t.id !== tl.id));
+      if (pathname === `/timeline/${tl.slug}`) {
+        router.push("/");
+      }
+      router.refresh();
+    }
+  };
 
   return (
     <nav style={navStyle}>
@@ -31,16 +50,26 @@ export function Navbar({ timelines, userEmail }: NavbarProps) {
             Painel
           </Link>
           {timelines.map((tl) => (
-            <Link
-              key={tl.id}
-              href={`/timeline/${tl.slug}`}
-              style={{
-                ...tabStyle,
-                ...(pathname === `/timeline/${tl.slug}` ? activeTabStyle : {}),
-              }}
-            >
-              {tl.name}
-            </Link>
+            <div key={tl.id} style={tabWrapStyle}>
+              <Link
+                href={`/timeline/${tl.slug}`}
+                style={{
+                  ...tabStyle,
+                  ...(pathname === `/timeline/${tl.slug}` ? activeTabStyle : {}),
+                }}
+              >
+                {tl.name}
+              </Link>
+              <button
+                onClick={(e) => deleteTimeline(e, tl)}
+                style={tabDeleteStyle}
+                title="Excluir timeline"
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.color = "#c0392b"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.4"; e.currentTarget.style.color = "var(--stone)"; }}
+              >
+                ×
+              </button>
+            </div>
           ))}
         </div>
       </div>
@@ -91,6 +120,12 @@ const tabsStyle: React.CSSProperties = {
   gap: 4,
 };
 
+const tabWrapStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  position: "relative",
+};
+
 const tabStyle: React.CSSProperties = {
   fontSize: 9,
   fontWeight: 400,
@@ -107,4 +142,17 @@ const activeTabStyle: React.CSSProperties = {
   color: "var(--dark)",
   background: "#e8e6e4",
   fontWeight: 500,
+};
+
+const tabDeleteStyle: React.CSSProperties = {
+  background: "none",
+  border: "none",
+  fontSize: 13,
+  color: "var(--stone)",
+  cursor: "pointer",
+  padding: "2px 4px",
+  lineHeight: 1,
+  opacity: 0.4,
+  transition: "opacity 0.15s ease",
+  marginLeft: -6,
 };

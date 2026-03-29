@@ -19,5 +19,11 @@ body {
   color: var(--dark);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.8); }
 }

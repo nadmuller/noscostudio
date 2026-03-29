@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { DashboardClient } from "@/components/DashboardClient";
-import type { Task, Timeline } from "@/lib/types";
+import type { Task } from "@/lib/types";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -10,19 +10,17 @@ export default async function DashboardPage() {
     .select("*")
     .order("due_date", { ascending: true });
 
-  const { data: timelines } = await supabase
-    .from("timelines")
-    .select("*")
-    .order("sort_order", { ascending: true });
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const allTasks = (tasks as Task[]) || [];
+  const groups = [...new Set(allTasks.map((t) => t.group_name))];
+
   return (
     <DashboardClient
-      tasks={(tasks as Task[]) || []}
-      timelines={(timelines as Timeline[]) || []}
+      tasks={allTasks}
+      existingGroups={groups}
       userEmail={user?.email || ""}
     />
   );

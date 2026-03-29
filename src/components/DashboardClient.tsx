@@ -8,19 +8,17 @@ import type { Task, Timeline } from "@/lib/types";
 
 interface DashboardClientProps {
   tasks: Task[];
-  timelines: Timeline[];
+  existingGroups: string[];
   userEmail: string;
 }
 
 export function DashboardClient({
   tasks,
-  timelines: initialTimelines,
+  existingGroups,
   userEmail,
 }: DashboardClientProps) {
   const [showCreate, setShowCreate] = useState(false);
   const router = useRouter();
-
-  const groups = [...new Set(tasks.map((t) => t.group_name))];
 
   const handleCreated = (timeline: Timeline) => {
     setShowCreate(false);
@@ -39,7 +37,7 @@ export function DashboardClient({
       <TaskTable tasks={tasks} />
       {showCreate && (
         <CreateTimelineModal
-          existingGroups={groups}
+          existingGroups={existingGroups}
           ownerEmail={userEmail}
           onCreated={handleCreated}
           onClose={() => setShowCreate(false)}

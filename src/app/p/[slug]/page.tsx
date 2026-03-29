@@ -35,46 +35,12 @@ export default async function PublicTimelinePage({
   const { data: tasks } = await query;
 
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      <header style={headerStyle}>
-        <div>
-          <span style={brandStyle}>Nosco Studio</span>
-          <span style={sepStyle}>·</span>
-          <span style={nameStyle}>{tl.name}</span>
-        </div>
-      </header>
-      <div style={{ flex: 1, overflow: "hidden" }}>
-        <Timeline tasks={(tasks as Task[]) || []} readOnly />
-      </div>
+    <div style={{ minHeight: "100vh", overflowY: "auto" }}>
+      <Timeline
+        tasks={(tasks as Task[]) || []}
+        readOnly
+        timelineName={tl.name}
+      />
     </div>
   );
 }
-
-const headerStyle: React.CSSProperties = {
-  padding: "20px 40px",
-  borderBottom: "1px solid #cec9c6",
-  background: "#f3f2f3",
-  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-};
-
-const brandStyle: React.CSSProperties = {
-  fontSize: 10,
-  fontWeight: 500,
-  letterSpacing: "0.3em",
-  textTransform: "uppercase",
-  color: "#22221e",
-};
-
-const sepStyle: React.CSSProperties = {
-  margin: "0 12px",
-  color: "#a19891",
-  fontSize: 10,
-};
-
-const nameStyle: React.CSSProperties = {
-  fontSize: 10,
-  fontWeight: 300,
-  letterSpacing: "0.14em",
-  textTransform: "uppercase",
-  color: "#a19891",
-};
