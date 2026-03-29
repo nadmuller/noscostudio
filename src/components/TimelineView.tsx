@@ -9,9 +9,10 @@ import type { Task, Timeline as TimelineType } from "@/lib/types";
 interface TimelineViewProps {
   timeline: TimelineType;
   tasks: Task[];
+  projectSlug?: string;
 }
 
-export function TimelineView({ timeline, tasks }: TimelineViewProps) {
+export function TimelineView({ timeline, tasks, projectSlug }: TimelineViewProps) {
   const router = useRouter();
 
   const handleDeleteTimeline = async () => {
@@ -19,7 +20,8 @@ export function TimelineView({ timeline, tasks }: TimelineViewProps) {
     const supabase = createClient();
     const { error } = await supabase.from("timelines").delete().eq("id", timeline.id);
     if (!error) {
-      router.push("/");
+      const dest = projectSlug ? `/project/${projectSlug}` : "/";
+      router.push(dest);
       router.refresh();
     }
   };

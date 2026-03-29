@@ -10,12 +10,21 @@ import { useState } from "react";
 interface NavbarProps {
   timelines: Timeline[];
   userEmail: string;
+  projectName: string;
+  projectSlug: string;
 }
 
-export function Navbar({ timelines: initialTimelines, userEmail }: NavbarProps) {
+export function Navbar({
+  timelines: initialTimelines,
+  userEmail,
+  projectName,
+  projectSlug,
+}: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [timelines, setTimelines] = useState(initialTimelines);
+
+  const base = `/project/${projectSlug}`;
 
   const deleteTimeline = async (e: React.MouseEvent, tl: Timeline) => {
     e.preventDefault();
@@ -25,8 +34,8 @@ export function Navbar({ timelines: initialTimelines, userEmail }: NavbarProps) 
     const { error } = await supabase.from("timelines").delete().eq("id", tl.id);
     if (!error) {
       setTimelines((prev) => prev.filter((t) => t.id !== tl.id));
-      if (pathname === `/timeline/${tl.slug}`) {
-        router.push("/");
+      if (pathname === `${base}/timeline/${tl.slug}`) {
+        router.push(base);
       }
       router.refresh();
     }
@@ -39,12 +48,16 @@ export function Navbar({ timelines: initialTimelines, userEmail }: NavbarProps) 
           Nosco Studio
         </Link>
         <div style={dividerStyle} />
+        <Link href={base} style={projectNameStyle}>
+          {projectName}
+        </Link>
+        <div style={dividerStyle} />
         <div style={tabsStyle}>
           <Link
-            href="/"
+            href={base}
             style={{
               ...tabStyle,
-              ...(pathname === "/" ? activeTabStyle : {}),
+              ...(pathname === base ? activeTabStyle : {}),
             }}
           >
             Painel
@@ -52,10 +65,12 @@ export function Navbar({ timelines: initialTimelines, userEmail }: NavbarProps) 
           {timelines.map((tl) => (
             <div key={tl.id} style={tabWrapStyle}>
               <Link
-                href={`/timeline/${tl.slug}`}
+                href={`${base}/timeline/${tl.slug}`}
                 style={{
                   ...tabStyle,
-                  ...(pathname === `/timeline/${tl.slug}` ? activeTabStyle : {}),
+                  ...(pathname === `${base}/timeline/${tl.slug}`
+                    ? activeTabStyle
+                    : {}),
                 }}
               >
                 {tl.name}
@@ -64,8 +79,14 @@ export function Navbar({ timelines: initialTimelines, userEmail }: NavbarProps) 
                 onClick={(e) => deleteTimeline(e, tl)}
                 style={tabDeleteStyle}
                 title="Excluir timeline"
-                onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.color = "#c0392b"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.4"; e.currentTarget.style.color = "var(--stone)"; }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "1";
+                  e.currentTarget.style.color = "#c0392b";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "0.4";
+                  e.currentTarget.style.color = "var(--stone)";
+                }}
               >
                 ×
               </button>
@@ -107,11 +128,21 @@ const logoStyle: React.CSSProperties = {
   textDecoration: "none",
 };
 
+const projectNameStyle: React.CSSProperties = {
+  fontSize: 10,
+  fontWeight: 500,
+  letterSpacing: "0.16em",
+  textTransform: "uppercase",
+  color: "var(--stone)",
+  textDecoration: "none",
+  transition: "color 0.15s ease",
+};
+
 const dividerStyle: React.CSSProperties = {
   width: 1,
   height: 20,
   background: "var(--sand)",
-  margin: "0 24px",
+  margin: "0 20px",
 };
 
 const tabsStyle: React.CSSProperties = {

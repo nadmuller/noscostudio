@@ -11,6 +11,7 @@ interface DashboardClientProps {
   existingGroups: string[];
   userEmail: string;
   projectId: string;
+  projectSlug: string;
 }
 
 export function DashboardClient({
@@ -18,13 +19,14 @@ export function DashboardClient({
   existingGroups,
   userEmail,
   projectId,
+  projectSlug,
 }: DashboardClientProps) {
   const [showCreate, setShowCreate] = useState(false);
   const router = useRouter();
 
   const handleCreated = (timeline: Timeline) => {
     setShowCreate(false);
-    router.push(`/timeline/${timeline.slug}`);
+    router.push(`/project/${projectSlug}/timeline/${timeline.slug}`);
     router.refresh();
   };
 

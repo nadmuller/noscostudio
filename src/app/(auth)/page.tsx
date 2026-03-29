@@ -1,38 +1,37 @@
 import { createClient } from "@/lib/supabase/server";
-import { DashboardClient } from "@/components/DashboardClient";
-import type { Task, Project } from "@/lib/types";
+import { ProjectsHome } from "@/components/ProjectsHome";
+import type { Project } from "@/lib/types";
 
-export default async function DashboardPage() {
+export default async function HomePage() {
   const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Carregar o primeiro projeto do usuário
+  // Fetch all projects
   const { data: projects } = await supabase
     .from("projects")
     .select("*")
-    .order("created_at", { ascending: true })
-    .limit(1);
+    .order("created_at", { ascending: true });
 
-  const currentProject = (projects as Project[])?.[0] || null;
+  const allProjects = (projects as Project[]) || [];
 
-  const { data: tasks } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("project_id", currentProject?.id || "")
-    .order("due_date", { ascending: true });
-
-  const allTasks = (tasks as Task[]) || [];
-  const groups = [...new Set(allTasks.map((t) => t.group_name))];
+  // Fetch task counts per project
+  const projectsWithCounts = await Promise.all(
+    allProjects.map(async (p) => {
+      const { count } = await supabase
+        .from("tasks")
+        .select("*", { count: "exact", head: true })
+        .eq("project_id", p.id);
+      return { ...p, task_count: count || 0 };
+    })
+  );
 
   return (
-    <DashboardClient
-      tasks={allTasks}
-      existingGroups={groups}
+    <ProjectsHome
+      projects={projectsWithCounts}
       userEmail={user?.email || ""}
-      projectId={currentProject?.id || ""}
     />
   );
 }

@@ -4,19 +4,19 @@ import { notFound } from "next/navigation";
 import type { Task, Timeline as TimelineType } from "@/lib/types";
 import { applyFilters } from "@/lib/timelines";
 
-export default async function TimelinePage({
+export default async function ProjectTimelinePage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; tslug: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, tslug } = await params;
   const supabase = await createClient();
 
   // Fetch the timeline record
   const { data: timeline } = await supabase
     .from("timelines")
     .select("*")
-    .eq("slug", slug)
+    .eq("slug", tslug)
     .single();
 
   if (!timeline) notFound();
@@ -34,5 +34,5 @@ export default async function TimelinePage({
 
   const { data: tasks } = await query;
 
-  return <TimelineView timeline={tl} tasks={(tasks as Task[]) || []} />;
+  return <TimelineView timeline={tl} tasks={(tasks as Task[]) || []} projectSlug={slug} />;
 }
