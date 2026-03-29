@@ -35,6 +35,7 @@ export function TimelineView({ timeline, tasks }: TimelineViewProps) {
       <Timeline
         tasks={tasks}
         timelineName={timeline.name}
+        projectId={timeline.project_id}
         shareToggle={<ShareToggle timeline={timeline} />}
         extraHeaderRight={deleteBtn}
       />

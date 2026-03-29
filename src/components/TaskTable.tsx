@@ -7,6 +7,7 @@ import type { Task } from "@/lib/types";
 
 interface TaskTableProps {
   tasks: Task[];
+  projectId: string;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -15,7 +16,7 @@ const STATUS_LABELS: Record<string, string> = {
   pending: "Não iniciado",
 };
 
-export function TaskTable({ tasks: initialTasks }: TaskTableProps) {
+export function TaskTable({ tasks: initialTasks, projectId }: TaskTableProps) {
   const [tasks, setTasks] = useState(initialTasks);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -139,6 +140,7 @@ export function TaskTable({ tasks: initialTasks }: TaskTableProps) {
       {(editingTask || isAdding) && (
         <TaskEditor
           task={editingTask}
+          projectId={projectId}
           onSave={handleSave}
           onDelete={handleDelete}
           onClose={() => {

@@ -8,6 +8,7 @@ import type { Timeline, TimelineFilters } from "@/lib/types";
 interface CreateTimelineModalProps {
   existingGroups: string[];
   ownerEmail: string;
+  projectId: string;
   onCreated: (timeline: Timeline) => void;
   onClose: () => void;
 }
@@ -15,6 +16,7 @@ interface CreateTimelineModalProps {
 export function CreateTimelineModal({
   existingGroups,
   ownerEmail,
+  projectId,
   onCreated,
   onClose,
 }: CreateTimelineModalProps) {
@@ -59,6 +61,7 @@ export function CreateTimelineModal({
         filters,
         is_public: false,
         owner_email: ownerEmail,
+        project_id: projectId,
       })
       .select()
       .single();

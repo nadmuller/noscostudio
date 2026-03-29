@@ -6,12 +6,13 @@ import type { Task } from "@/lib/types";
 
 interface TaskEditorProps {
   task: Task | null;
+  projectId?: string;
   onSave: (task: Task) => void;
   onDelete: (taskId: string) => void;
   onClose: () => void;
 }
 
-export function TaskEditor({ task, onSave, onDelete, onClose }: TaskEditorProps) {
+export function TaskEditor({ task, projectId, onSave, onDelete, onClose }: TaskEditorProps) {
   const isNew = !task;
   const [groupName, setGroupName] = useState(task?.group_name || "");
   const [name, setName] = useState(task?.name || "");
@@ -57,6 +58,7 @@ export function TaskEditor({ task, onSave, onDelete, onClose }: TaskEditorProps)
           return_date: returnDate || null,
           status,
           sort_order: 0,
+          project_id: projectId,
         })
         .select()
         .single();

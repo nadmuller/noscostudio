@@ -10,12 +10,14 @@ interface DashboardClientProps {
   tasks: Task[];
   existingGroups: string[];
   userEmail: string;
+  projectId: string;
 }
 
 export function DashboardClient({
   tasks,
   existingGroups,
   userEmail,
+  projectId,
 }: DashboardClientProps) {
   const [showCreate, setShowCreate] = useState(false);
   const router = useRouter();
@@ -34,11 +36,12 @@ export function DashboardClient({
           + Nova Timeline
         </button>
       </div>
-      <TaskTable tasks={tasks} />
+      <TaskTable tasks={tasks} projectId={projectId} />
       {showCreate && (
         <CreateTimelineModal
           existingGroups={existingGroups}
           ownerEmail={userEmail}
+          projectId={projectId}
           onCreated={handleCreated}
           onClose={() => setShowCreate(false)}
         />

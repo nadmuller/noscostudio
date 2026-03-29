@@ -23,10 +23,11 @@ export default async function TimelinePage({
 
   const tl = timeline as TimelineType;
 
-  // Build filtered tasks query
+  // Build filtered tasks query (scoped to the timeline's project)
   let query = supabase
     .from("tasks")
     .select("*")
+    .eq("project_id", tl.project_id)
     .order("due_date", { ascending: true });
 
   query = applyFilters(query, tl.filters);

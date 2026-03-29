@@ -1,5 +1,15 @@
+export interface Project {
+  id: string;
+  name: string;
+  slug: string;
+  owner_email: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Task {
   id: string;
+  project_id: string;
   group_name: string;
   name: string;
   due_date: string;
@@ -26,6 +36,7 @@ export interface TimelineFilters {
 
 export interface Timeline {
   id: string;
+  project_id: string;
   name: string;
   slug: string;
   filters: TimelineFilters;

@@ -10,6 +10,7 @@ interface TimelineProps {
   tasks: Task[];
   readOnly?: boolean;
   timelineName?: string;
+  projectId?: string;
   shareToggle?: ReactNode;
   extraHeaderRight?: ReactNode;
 }
@@ -29,6 +30,7 @@ export function Timeline({
   tasks: initialTasks,
   readOnly = false,
   timelineName,
+  projectId,
   shareToggle,
   extraHeaderRight,
 }: TimelineProps) {
@@ -178,6 +180,7 @@ export function Timeline({
       {!readOnly && (editingTask || isAdding) && (
         <TaskEditor
           task={editingTask}
+          projectId={projectId}
           onSave={handleSave}
           onDelete={handleDelete}
           onClose={() => {
