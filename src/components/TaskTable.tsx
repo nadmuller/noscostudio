@@ -141,6 +141,7 @@ export function TaskTable({ tasks: initialTasks, projectId }: TaskTableProps) {
         <TaskEditor
           task={editingTask}
           projectId={projectId}
+          existingGroups={[...new Set(tasks.map((t) => t.group_name))]}
           onSave={handleSave}
           onDelete={handleDelete}
           onClose={() => {

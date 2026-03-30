@@ -7,21 +7,42 @@ import type { Task } from "@/lib/types";
 interface TaskEditorProps {
   task: Task | null;
   projectId?: string;
+  existingGroups?: string[];
   onSave: (task: Task) => void;
   onDelete: (taskId: string) => void;
   onClose: () => void;
 }
 
-export function TaskEditor({ task, projectId, onSave, onDelete, onClose }: TaskEditorProps) {
+export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDelete, onClose }: TaskEditorProps) {
   const isNew = !task;
-  const [groupName, setGroupName] = useState(task?.group_name || "");
   const [name, setName] = useState(task?.name || "");
+  const [groupName, setGroupName] = useState(task?.group_name || "");
+  const [showNewGroup, setShowNewGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
   const [dueDate, setDueDate] = useState(task?.due_date || "");
   const [returnDate, setReturnDate] = useState(task?.return_date || "");
   const [status, setStatus] = useState<Task["status"]>(task?.status || "pending");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const handleGroupChange = (value: string) => {
+    if (value === "__new__") {
+      setShowNewGroup(true);
+      setGroupName("");
+    } else {
+      setShowNewGroup(false);
+      setNewGroupName("");
+      setGroupName(value);
+    }
+  };
+
+  const handleNewGroupConfirm = () => {
+    if (newGroupName.trim()) {
+      setGroupName(newGroupName.trim().toUpperCase());
+      setShowNewGroup(false);
+    }
+  };
 
   // Animate in on mount
   useEffect(() => {
@@ -190,19 +211,6 @@ export function TaskEditor({ task, projectId, onSave, onDelete, onClose }: TaskE
         {/* Divider */}
         <div style={{ height: 1, background: "var(--sand)", margin: "-8px 0 0" }} />
 
-        {/* Group */}
-        <label style={labelStyle}>
-          <span style={labelTextStyle}>Grupo</span>
-          <input
-            type="text"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            placeholder="Ex: MOSIMANN"
-            style={inputStyle}
-            autoFocus={isNew}
-          />
-        </label>
-
         {/* Task name */}
         <label style={labelStyle}>
           <span style={labelTextStyle}>Nome da tarefa</span>
@@ -212,7 +220,85 @@ export function TaskEditor({ task, projectId, onSave, onDelete, onClose }: TaskE
             onChange={(e) => setName(e.target.value)}
             placeholder="Ex: Imagens 3D"
             style={inputStyle}
+            autoFocus={isNew}
           />
+        </label>
+
+        {/* Group dropdown */}
+        <label style={labelStyle}>
+          <span style={labelTextStyle}>Grupo</span>
+          {!showNewGroup ? (
+            <select
+              value={groupName}
+              onChange={(e) => handleGroupChange(e.target.value)}
+              style={{ ...inputStyle, cursor: "pointer", appearance: "auto" }}
+            >
+              <option value="" disabled>
+                Selecione um grupo
+              </option>
+              {existingGroups.map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+              <option value="__new__">+ Criar novo grupo</option>
+            </select>
+          ) : (
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                type="text"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleNewGroupConfirm();
+                  if (e.key === "Escape") {
+                    setShowNewGroup(false);
+                    setNewGroupName("");
+                  }
+                }}
+                placeholder="Nome do novo grupo"
+                style={{ ...inputStyle, flex: 1 }}
+                autoFocus
+              />
+              <button
+                onClick={handleNewGroupConfirm}
+                style={{
+                  padding: "0 16px",
+                  background: "var(--dark)",
+                  color: "var(--cream)",
+                  border: "none",
+                  borderRadius: 6,
+                  fontSize: 10,
+                  fontWeight: 500,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                }}
+              >
+                OK
+              </button>
+              <button
+                onClick={() => {
+                  setShowNewGroup(false);
+                  setNewGroupName("");
+                  setGroupName(task?.group_name || "");
+                }}
+                style={{
+                  padding: "0 12px",
+                  background: "transparent",
+                  color: "var(--stone)",
+                  border: "1px solid var(--sand)",
+                  borderRadius: 6,
+                  fontSize: 10,
+                  cursor: "pointer",
+                  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          )}
         </label>
 
         {/* Dates row */}
