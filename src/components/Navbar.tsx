@@ -37,7 +37,6 @@ export function Navbar({
       if (pathname === `${base}/timeline/${tl.slug}`) {
         router.push(base);
       }
-      router.refresh();
     }
   };
 

@@ -17,6 +17,7 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
   const isNew = !task;
   const [name, setName] = useState(task?.name || "");
   const [groupName, setGroupName] = useState(task?.group_name || "");
+  const [groups, setGroups] = useState(existingGroups);
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [dueDate, setDueDate] = useState(task?.due_date || "");
@@ -29,7 +30,6 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
   const handleGroupChange = (value: string) => {
     if (value === "__new__") {
       setShowNewGroup(true);
-      setGroupName("");
     } else {
       setShowNewGroup(false);
       setNewGroupName("");
@@ -38,9 +38,14 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
   };
 
   const handleNewGroupConfirm = () => {
-    if (newGroupName.trim()) {
-      setGroupName(newGroupName.trim().toUpperCase());
+    const trimmed = newGroupName.trim().toUpperCase();
+    if (trimmed) {
+      if (!groups.includes(trimmed)) {
+        setGroups((prev) => [...prev, trimmed]);
+      }
+      setGroupName(trimmed);
       setShowNewGroup(false);
+      setNewGroupName("");
     }
   };
 
@@ -84,7 +89,9 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
         .select()
         .single();
 
-      if (!error && data) {
+      if (error) {
+        alert("Erro ao criar tarefa. Verifique os campos e tente novamente.");
+      } else if (data) {
         onSave(data as Task);
       }
     } else {
@@ -102,7 +109,9 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
         .select()
         .single();
 
-      if (!error && data) {
+      if (error) {
+        alert("Erro ao salvar tarefa. Verifique os campos e tente novamente.");
+      } else if (data) {
         onSave(data as Task);
       }
     }
@@ -117,7 +126,9 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
     const supabase = createClient();
     const { error } = await supabase.from("tasks").delete().eq("id", task.id);
 
-    if (!error) {
+    if (error) {
+      alert("Erro ao excluir tarefa.");
+    } else {
       onDelete(task.id);
     }
     setLoading(false);
@@ -236,7 +247,7 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
               <option value="" disabled>
                 Selecione um grupo
               </option>
-              {existingGroups.map((g) => (
+              {groups.map((g) => (
                 <option key={g} value={g}>
                   {g}
                 </option>

@@ -22,7 +22,6 @@ export function TimelineView({ timeline, tasks, projectSlug }: TimelineViewProps
     if (!error) {
       const dest = projectSlug ? `/project/${projectSlug}` : "/";
       router.push(dest);
-      router.refresh();
     }
   };
 

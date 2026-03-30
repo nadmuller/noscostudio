@@ -27,7 +27,6 @@ export function DashboardClient({
   const handleCreated = (timeline: Timeline) => {
     setShowCreate(false);
     router.push(`/project/${projectSlug}/timeline/${timeline.slug}`);
-    router.refresh();
   };
 
   return (

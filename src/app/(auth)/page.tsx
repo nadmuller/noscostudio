@@ -17,16 +17,21 @@ export default async function HomePage() {
 
   const allProjects = (projects as Project[]) || [];
 
-  // Fetch task counts per project
-  const projectsWithCounts = await Promise.all(
-    allProjects.map(async (p) => {
-      const { count } = await supabase
-        .from("tasks")
-        .select("*", { count: "exact", head: true })
-        .eq("project_id", p.id);
-      return { ...p, task_count: count || 0 };
-    })
-  );
+  // Fetch task counts in a single query
+  const { data: counts } = await supabase
+    .from("tasks")
+    .select("project_id")
+    .in("project_id", allProjects.map((p) => p.id));
+
+  const countMap: Record<string, number> = {};
+  (counts || []).forEach((row: { project_id: string }) => {
+    countMap[row.project_id] = (countMap[row.project_id] || 0) + 1;
+  });
+
+  const projectsWithCounts = allProjects.map((p) => ({
+    ...p,
+    task_count: countMap[p.id] || 0,
+  }));
 
   return (
     <ProjectsHome
