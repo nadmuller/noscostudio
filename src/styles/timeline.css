@@ -311,6 +311,7 @@
   font-size: 13px;
   color: var(--dark);
   margin-bottom: 8px;
+  table-layout: fixed;
 }
 
 .tl-act-table thead th {
@@ -344,14 +345,22 @@
   border-bottom: 1px solid var(--sand);
 }
 
-.tl-th-status { width: 140px; }
-.tl-th-name { }
-.tl-th-date { width: 90px; }
+.tl-th-status { width: 15%; }
+.tl-th-name { width: 45%; }
+.tl-th-date { width: 10%; }
 
 .tl-td-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  white-space: nowrap;
+}
+
+.tl-td-status .tl-act-dot {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.tl-td-status .tl-act-status {
+  vertical-align: middle;
 }
 
 .tl-td-name {
