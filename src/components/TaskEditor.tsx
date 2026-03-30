@@ -25,6 +25,7 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
   const [status, setStatus] = useState<Task["status"]>(task?.status || "pending");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const panelRef = useRef<HTMLDivElement>(null);
 
   const handleGroupChange = (value: string) => {
@@ -69,7 +70,15 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
   };
 
   const handleSave = async () => {
-    if (!groupName.trim() || !name.trim() || !dueDate) return;
+    const missing: string[] = [];
+    if (!name.trim()) missing.push("Nome da tarefa");
+    if (!groupName.trim()) missing.push("Grupo");
+    if (!dueDate) missing.push("Data de entrega");
+    if (missing.length > 0) {
+      setErrors(missing);
+      return;
+    }
+    setErrors([]);
     setLoading(true);
 
     const supabase = createClient();
@@ -383,6 +392,20 @@ export function TaskEditor({ task, projectId, existingGroups = [], onSave, onDel
 
         {/* Divider */}
         <div style={{ height: 1, background: "var(--sand)", margin: "4px 0 0" }} />
+
+        {/* Validation errors */}
+        {errors.length > 0 && (
+          <p
+            style={{
+              fontSize: 12,
+              color: "#c0392b",
+              margin: 0,
+              fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+            }}
+          >
+            Preencha: {errors.join(", ")}
+          </p>
+        )}
 
         {/* Actions */}
         <div style={{ display: "flex", gap: 12 }}>
