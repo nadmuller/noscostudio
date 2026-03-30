@@ -141,31 +141,48 @@ export function Timeline({
         <div className="tl-canvas" ref={canvasRef}></div>
       </div>
 
-      {/* Activity list below timeline */}
+      {/* Activity table below timeline */}
       <div className="tl-activities">
         <h2>Atividades</h2>
         {Object.entries(grouped).map(([group, groupTasks]) => (
           <div key={group} className="tl-act-group">
             <div className="tl-act-group-name">{group}</div>
-            <ul className="tl-act-list">
-              {groupTasks
-                .sort((a, b) => a.due_date.localeCompare(b.due_date))
-                .map((task) => (
-                  <li key={task.id}>
-                    <span
-                      className="tl-act-dot"
-                      style={dotStyle(task.status)}
-                    />
-                    <span className="tl-act-date">
-                      {formatDate(task.due_date)}
-                    </span>
-                    <span className="tl-act-name">{task.name}</span>
-                    <span className="tl-act-status">
-                      {STATUS_LABELS[task.status]}
-                    </span>
-                  </li>
-                ))}
-            </ul>
+            <table className="tl-act-table">
+              <thead>
+                <tr>
+                  <th className="tl-th-status">Status</th>
+                  <th className="tl-th-name">Tarefa</th>
+                  <th className="tl-th-date">Entrega</th>
+                  <th className="tl-th-date">Retorno</th>
+                </tr>
+              </thead>
+              <tbody>
+                {groupTasks
+                  .sort((a, b) => a.due_date.localeCompare(b.due_date))
+                  .map((task) => (
+                    <tr key={task.id}>
+                      <td className="tl-td-status">
+                        <span
+                          className="tl-act-dot"
+                          style={dotStyle(task.status)}
+                        />
+                        <span className="tl-act-status">
+                          {STATUS_LABELS[task.status]}
+                        </span>
+                      </td>
+                      <td className="tl-td-name">{task.name}</td>
+                      <td className="tl-td-date">
+                        {formatDate(task.due_date)}
+                      </td>
+                      <td className="tl-td-date">
+                        {task.return_date
+                          ? formatDate(task.return_date)
+                          : "—"}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
         ))}
       </div>

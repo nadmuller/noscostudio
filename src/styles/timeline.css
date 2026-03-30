@@ -304,24 +304,65 @@
   margin-bottom: 10px;
 }
 
-.tl-act-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.tl-act-list li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 7px 0;
+/* ── ACTIVITY TABLE ───────────────────────────────────── */
+.tl-act-table {
+  width: 100%;
+  border-collapse: collapse;
   font-size: 13px;
   color: var(--dark);
-  border-bottom: 1px solid #f0efed;
+  margin-bottom: 8px;
 }
 
-.tl-act-list li:last-child {
-  border-bottom: none;
+.tl-act-table thead th {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--stone);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1.5px solid var(--sand);
+  border-right: 1px solid #edecea;
+}
+
+.tl-act-table thead th:last-child {
+  border-right: none;
+}
+
+.tl-act-table tbody td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #edecea;
+  border-right: 1px solid #edecea;
+  vertical-align: middle;
+}
+
+.tl-act-table tbody td:last-child {
+  border-right: none;
+}
+
+.tl-act-table tbody tr:last-child td {
+  border-bottom: 1px solid var(--sand);
+}
+
+.tl-th-status { width: 140px; }
+.tl-th-name { }
+.tl-th-date { width: 90px; }
+
+.tl-td-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tl-td-name {
+  font-weight: 400;
+}
+
+.tl-td-date {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--stone);
 }
 
 .tl-act-dot {
@@ -329,18 +370,6 @@
   height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
-}
-
-.tl-act-date {
-  font-size: 11px;
-  font-weight: 300;
-  letter-spacing: 0.06em;
-  color: var(--stone);
-  min-width: 52px;
-}
-
-.tl-act-name {
-  flex: 1;
 }
 
 .tl-act-status {
