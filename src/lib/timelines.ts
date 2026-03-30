@@ -33,8 +33,5 @@ export function generateSlug(name: string): string {
 }
 
 export function getPublicUrl(slug: string): string {
-  if (typeof window !== "undefined") {
-    return `${window.location.origin}/p/${slug}`;
-  }
-  return `/p/${slug}`;
+  return `https://noscostudio.com.br/p/${slug}`;
 }
