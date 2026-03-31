@@ -359,7 +359,7 @@
   margin-right: 8px;
 }
 
-.tl-td-status .tl-act-status {
+.tl-td-status .tl-act-status-text {
   vertical-align: middle;
 }
 
@@ -381,12 +381,108 @@
   flex-shrink: 0;
 }
 
-.tl-act-status {
+.tl-act-status-text {
   font-size: 9px;
   font-weight: 300;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--stone);
+  vertical-align: middle;
+}
+
+/* Mobile dot: hidden on desktop, shown on mobile inside task name cell */
+.tl-mobile-dot {
+  display: none;
+}
+
+/* ── MOBILE RESPONSIVE ────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Header */
+  .tl-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 16px 16px;
+    gap: 12px;
+  }
+
+  .tl-header-right {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .legend {
+    gap: 12px;
+  }
+
+  /* Activities section */
+  .tl-activities {
+    padding: 24px 16px 32px;
+  }
+
+  /* Table: hide status column, show dot inside task name */
+  .tl-th-status,
+  .tl-td-status {
+    display: none;
+  }
+
+  .tl-mobile-dot {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  .tl-act-table {
+    table-layout: auto;
+  }
+
+  .tl-th-name { width: auto; }
+  .tl-th-date { width: 60px; }
+
+  .tl-act-table thead th {
+    padding: 6px 8px;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .tl-act-table tbody td {
+    padding: 8px 8px;
+    font-size: 12px;
+  }
+
+  .tl-td-date {
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .tl-td-name {
+    font-size: 12px;
+  }
+
+  /* Footer */
+  .tl-footer {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .tl-activities {
+    padding: 20px 12px 24px;
+  }
+
+  .tl-th-date { width: 50px; }
+
+  .tl-act-table thead th {
+    padding: 5px 6px;
+  }
+
+  .tl-act-table tbody td {
+    padding: 7px 6px;
+    font-size: 11px;
+  }
+
+  .tl-td-date {
+    font-size: 9px;
+  }
 }
 
 /* ── ADD BUTTON ────────────────────────────────────────── */

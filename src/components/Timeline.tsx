@@ -166,11 +166,17 @@ export function Timeline({
                           className="tl-act-dot"
                           style={dotStyle(task.status)}
                         />
-                        <span className="tl-act-status">
+                        <span className="tl-act-status-text">
                           {STATUS_LABELS[task.status]}
                         </span>
                       </td>
-                      <td className="tl-td-name">{task.name}</td>
+                      <td className="tl-td-name">
+                        <span
+                          className="tl-act-dot tl-mobile-dot"
+                          style={dotStyle(task.status)}
+                        />
+                        {task.name}
+                      </td>
                       <td className="tl-td-date">
                         {formatDate(task.due_date)}
                       </td>
