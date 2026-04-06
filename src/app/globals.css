@@ -27,3 +27,10 @@ body {
   0%, 100% { opacity: 0.3; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.8); }
 }
+
+/* Budget table spreadsheet inputs */
+.budget-table input:focus,
+.budget-table select:focus {
+  border-color: var(--sand) !important;
+  background: #fff !important;
+}

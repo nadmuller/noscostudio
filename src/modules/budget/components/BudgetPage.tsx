@@ -9,7 +9,7 @@ interface BudgetPageProps {
 
 export function BudgetPage({ projectId }: BudgetPageProps) {
   const [items, setItems] = useState<BudgetItem[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [areaTotal, setAreaTotal] = useState<number>(0);
 
   const addItem = () => {
     const newItem: BudgetItem = {
@@ -20,7 +20,6 @@ export function BudgetPage({ projectId }: BudgetPageProps) {
       valor_unitario: 0,
     };
     setItems((prev) => [...prev, newItem]);
-    setEditingId(newItem.id);
   };
 
   const updateItem = (id: string, field: keyof BudgetItem, value: string | number) => {
@@ -32,13 +31,14 @@ export function BudgetPage({ projectId }: BudgetPageProps) {
   const removeItem = (id: string) => {
     if (!confirm("Remover este item?")) return;
     setItems((prev) => prev.filter((item) => item.id !== id));
-    if (editingId === id) setEditingId(null);
   };
 
   const totalGeral = items.reduce(
     (sum, item) => sum + item.quantidade * item.valor_unitario,
     0
   );
+
+  const custoPorM2 = areaTotal > 0 ? totalGeral / areaTotal : 0;
 
   const formatCurrency = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -57,111 +57,107 @@ export function BudgetPage({ projectId }: BudgetPageProps) {
         </button>
       </div>
 
-      <div style={tableWrapStyle}>
+      {/* Resumo */}
+      <div style={summaryRowStyle}>
+        <div style={summaryCardStyle}>
+          <span style={summaryLabelStyle}>Custo total</span>
+          <span style={summaryValueStyle}>{formatCurrency(totalGeral)}</span>
+        </div>
+        <div style={summaryCardStyle}>
+          <span style={summaryLabelStyle}>Área total (m²)</span>
+          <input
+            type="number"
+            value={areaTotal || ""}
+            onChange={(e) => setAreaTotal(parseFloat(e.target.value) || 0)}
+            placeholder="0"
+            min="0"
+            step="any"
+            style={summaryInputStyle}
+          />
+        </div>
+        <div style={summaryCardStyle}>
+          <span style={summaryLabelStyle}>Custo por m²</span>
+          <span style={summaryValueStyle}>
+            {areaTotal > 0 ? formatCurrency(custoPorM2) : "—"}
+          </span>
+        </div>
+      </div>
+
+      {/* Tabela */}
+      <div style={tableWrapStyle} className="budget-table">
         <table style={tableStyle}>
           <thead>
             <tr>
               <th style={thStyle}>Descrição</th>
               <th style={{ ...thStyle, width: 100 }}>Unidade</th>
-              <th style={{ ...thStyle, width: 110 }}>Quantidade</th>
-              <th style={{ ...thStyle, width: 140 }}>Valor Unitário</th>
-              <th style={{ ...thStyle, width: 140 }}>Total</th>
+              <th style={{ ...thStyle, width: 120, textAlign: "right" }}>Quantidade</th>
+              <th style={{ ...thStyle, width: 150, textAlign: "right" }}>Valor Unitário</th>
+              <th style={{ ...thStyle, width: 140, textAlign: "right" }}>Total</th>
               <th style={{ ...thStyle, width: 50 }}></th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => {
-              const isEditing = editingId === item.id;
               const itemTotal = item.quantidade * item.valor_unitario;
 
               return (
-                <tr
-                  key={item.id}
-                  style={rowStyle}
-                  onClick={() => setEditingId(item.id)}
-                >
+                <tr key={item.id} style={rowStyle}>
                   <td style={tdStyle}>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={item.descricao}
-                        onChange={(e) => updateItem(item.id, "descricao", e.target.value)}
-                        placeholder="Descrição do item"
-                        style={cellInputStyle}
-                        autoFocus
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    ) : (
-                      <span style={{ color: item.descricao ? "var(--dark)" : "var(--stone)" }}>
-                        {item.descricao || "Sem descrição"}
-                      </span>
-                    )}
+                    <input
+                      type="text"
+                      value={item.descricao}
+                      onChange={(e) => updateItem(item.id, "descricao", e.target.value)}
+                      placeholder="Descrição do item"
+                      style={cellInputStyle}
+                    />
                   </td>
                   <td style={tdStyle}>
-                    {isEditing ? (
-                      <select
-                        value={item.unidade}
-                        onChange={(e) => updateItem(item.id, "unidade", e.target.value)}
-                        style={{ ...cellInputStyle, cursor: "pointer" }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <option value="un">un</option>
-                        <option value="m²">m²</option>
-                        <option value="m³">m³</option>
-                        <option value="ml">ml</option>
-                        <option value="hr">hr</option>
-                        <option value="diária">diária</option>
-                        <option value="vb">vb</option>
-                        <option value="kg">kg</option>
-                        <option value="pç">pç</option>
-                      </select>
-                    ) : (
-                      <span style={unitBadgeStyle}>{item.unidade}</span>
-                    )}
+                    <select
+                      value={item.unidade}
+                      onChange={(e) => updateItem(item.id, "unidade", e.target.value)}
+                      style={{ ...cellInputStyle, cursor: "pointer" }}
+                    >
+                      <option value="un">un</option>
+                      <option value="m²">m²</option>
+                      <option value="m³">m³</option>
+                      <option value="ml">ml</option>
+                      <option value="hr">hr</option>
+                      <option value="diária">diária</option>
+                      <option value="vb">vb</option>
+                      <option value="kg">kg</option>
+                      <option value="pç">pç</option>
+                    </select>
                   </td>
                   <td style={tdStyle}>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={item.quantidade}
-                        onChange={(e) =>
-                          updateItem(item.id, "quantidade", parseFloat(e.target.value) || 0)
-                        }
-                        min="0"
-                        step="any"
-                        style={{ ...cellInputStyle, textAlign: "right" }}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    ) : (
-                      <span>{item.quantidade}</span>
-                    )}
+                    <input
+                      type="number"
+                      value={item.quantidade || ""}
+                      onChange={(e) =>
+                        updateItem(item.id, "quantidade", parseFloat(e.target.value) || 0)
+                      }
+                      min="0"
+                      step="any"
+                      style={{ ...cellInputStyle, textAlign: "right" }}
+                    />
                   </td>
                   <td style={tdStyle}>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={item.valor_unitario}
-                        onChange={(e) =>
-                          updateItem(item.id, "valor_unitario", parseFloat(e.target.value) || 0)
-                        }
-                        min="0"
-                        step="0.01"
-                        style={{ ...cellInputStyle, textAlign: "right" }}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    ) : (
-                      <span>{formatCurrency(item.valor_unitario)}</span>
-                    )}
+                    <input
+                      type="number"
+                      value={item.valor_unitario || ""}
+                      onChange={(e) =>
+                        updateItem(item.id, "valor_unitario", parseFloat(e.target.value) || 0)
+                      }
+                      min="0"
+                      step="0.01"
+                      style={{ ...cellInputStyle, textAlign: "right" }}
+                    />
                   </td>
-                  <td style={{ ...tdStyle, fontWeight: 500, color: "var(--dark)" }}>
+                  <td style={{ ...tdStyle, textAlign: "right", fontWeight: 500, color: "var(--dark)" }}>
                     {formatCurrency(itemTotal)}
                   </td>
                   <td style={tdStyle}>
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeItem(item.id);
-                      }}
+                      onClick={() => removeItem(item.id)}
                       style={deleteBtnStyle}
                       title="Remover"
                     >
@@ -243,6 +239,51 @@ const addBtnStyle: React.CSSProperties = {
   fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
 };
 
+const summaryRowStyle: React.CSSProperties = {
+  display: "flex",
+  gap: 16,
+  marginBottom: 24,
+};
+
+const summaryCardStyle: React.CSSProperties = {
+  flex: 1,
+  background: "#fff",
+  border: "1px solid var(--sand)",
+  borderRadius: 8,
+  padding: "20px 24px",
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+};
+
+const summaryLabelStyle: React.CSSProperties = {
+  fontSize: 9,
+  fontWeight: 400,
+  letterSpacing: "0.16em",
+  textTransform: "uppercase",
+  color: "var(--stone)",
+};
+
+const summaryValueStyle: React.CSSProperties = {
+  fontSize: 20,
+  fontWeight: 600,
+  letterSpacing: "0.02em",
+  color: "var(--dark)",
+};
+
+const summaryInputStyle: React.CSSProperties = {
+  fontSize: 20,
+  fontWeight: 600,
+  color: "var(--dark)",
+  border: "none",
+  borderBottom: "1px solid var(--sand)",
+  outline: "none",
+  background: "transparent",
+  padding: "0 0 4px",
+  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+  width: "100%",
+};
+
 const tableWrapStyle: React.CSSProperties = {
   background: "#fff",
   borderRadius: 8,
@@ -269,7 +310,7 @@ const thStyle: React.CSSProperties = {
 };
 
 const tdStyle: React.CSSProperties = {
-  padding: "14px 20px",
+  padding: "8px 12px",
   borderBottom: "1px solid #f0efed",
   fontSize: 14,
   color: "var(--stone)",
@@ -277,32 +318,20 @@ const tdStyle: React.CSSProperties = {
 };
 
 const rowStyle: React.CSSProperties = {
-  cursor: "pointer",
   transition: "background 0.1s ease",
 };
 
 const cellInputStyle: React.CSSProperties = {
   width: "100%",
-  padding: "6px 10px",
-  border: "1px solid var(--sand)",
+  padding: "8px 10px",
+  border: "1px solid transparent",
   borderRadius: 4,
   fontSize: 14,
   color: "var(--dark)",
   fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
   outline: "none",
-  background: "#fff",
-  transition: "border-color 0.15s ease",
-};
-
-const unitBadgeStyle: React.CSSProperties = {
-  fontSize: 9,
-  fontWeight: 500,
-  letterSpacing: "0.14em",
-  textTransform: "uppercase",
-  color: "var(--dark)",
-  background: "#edecea",
-  padding: "4px 10px",
-  borderRadius: 3,
+  background: "transparent",
+  transition: "border-color 0.15s ease, background 0.15s ease",
 };
 
 const deleteBtnStyle: React.CSSProperties = {
