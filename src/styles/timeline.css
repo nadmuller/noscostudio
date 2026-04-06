@@ -390,6 +390,23 @@
   vertical-align: middle;
 }
 
+.tl-td-clickable {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s ease;
+}
+.tl-td-clickable:hover {
+  background: #f0efed;
+}
+
+.tl-dot-clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.tl-dot-clickable:hover {
+  transform: scale(1.5);
+}
+
 /* Mobile dot: hidden on desktop, shown on mobile inside task name cell */
 .tl-mobile-dot {
   display: none;
@@ -397,11 +414,44 @@
 
 /* ── MOBILE RESPONSIVE ────────────────────────────────── */
 @media (max-width: 768px) {
+  /* Edit area */
+  .tl-edit-area {
+    padding: 12px 16px 0;
+    gap: 8px;
+  }
+
+  .tl-edit-name-btn {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+  }
+
+  .tl-edit-name-input {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .tl-edit-filters {
+    gap: 5px;
+  }
+
+  .tl-edit-chip {
+    padding: 3px 8px;
+    font-size: 8px;
+  }
+
+  .tl-edit-add-input {
+    width: 120px;
+    font-size: 8px;
+    padding: 3px 8px;
+  }
+
   /* Header */
   .tl-header {
     flex-direction: column;
     align-items: flex-start;
-    padding: 20px 16px 16px;
+    padding: 12px 16px 12px;
     gap: 12px;
   }
 
@@ -465,6 +515,19 @@
 }
 
 @media (max-width: 420px) {
+  .tl-edit-area {
+    padding: 10px 12px 0;
+  }
+
+  .tl-edit-name-btn {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+
+  .tl-edit-add-input {
+    width: 110px;
+  }
+
   .tl-activities {
     padding: 20px 12px 24px;
   }
@@ -483,6 +546,114 @@
   .tl-td-date {
     font-size: 9px;
   }
+}
+
+/* ── EDIT AREA (name + filters) ───────────────────────── */
+.tl-edit-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 40px 0;
+}
+
+.tl-edit-name-row {
+  display: flex;
+  align-items: center;
+}
+
+.tl-edit-name-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dark);
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.tl-edit-icon {
+  font-size: 12px;
+  color: var(--stone);
+  opacity: 0.4;
+}
+
+.tl-edit-name-input {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dark);
+  border: none;
+  border-bottom: 1px solid var(--sand);
+  background: transparent;
+  padding: 2px 0;
+  outline: none;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  min-width: 200px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.tl-edit-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tl-edit-filter-label {
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-right: 4px;
+}
+
+.tl-edit-chip {
+  padding: 4px 10px;
+  border: 1px solid var(--sand);
+  border-radius: 20px;
+  background: transparent;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.tl-edit-chip-active {
+  background: var(--dark);
+  color: var(--cream);
+  border-color: var(--dark);
+}
+
+.tl-edit-add-form {
+  display: inline-flex;
+}
+
+.tl-edit-add-input {
+  padding: 4px 12px;
+  border: 1px dashed var(--sand);
+  border-radius: 20px;
+  background: transparent;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+  outline: none;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  width: 155px;
 }
 
 /* ── ADD BUTTON ────────────────────────────────────────── */

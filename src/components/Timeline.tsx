@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState, type ReactNode } from "react";
 import { renderTimeline } from "@/lib/timeline/renderer";
+import { createClient } from "@/lib/supabase/client";
 import { TaskEditor } from "./TaskEditor";
 import type { Task } from "@/lib/types";
 import "@/styles/timeline.css";
@@ -79,6 +80,24 @@ export function Timeline({
   const handleDelete = (taskId: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
     setEditingTask(null);
+  };
+
+  const cycleStatus = async (task: Task) => {
+    if (readOnly) return;
+    const order: Task["status"][] = ["pending", "progress", "done"];
+    const next = order[(order.indexOf(task.status) + 1) % 3];
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("tasks")
+      .update({ status: next, updated_at: new Date().toISOString() })
+      .eq("id", task.id)
+      .select()
+      .single();
+    if (!error && data) {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === task.id ? (data as Task) : t))
+      );
+    }
   };
 
   const today = new Date();
@@ -159,7 +178,10 @@ export function Timeline({
                   .sort((a, b) => a.due_date.localeCompare(b.due_date))
                   .map((task) => (
                     <tr key={task.id}>
-                      <td className="tl-td-status">
+                      <td
+                        className={`tl-td-status${readOnly ? "" : " tl-td-clickable"}`}
+                        onClick={() => cycleStatus(task)}
+                      >
                         <span
                           className="tl-act-dot"
                           style={dotStyle(task.status)}
@@ -170,8 +192,12 @@ export function Timeline({
                       </td>
                       <td className="tl-td-name">
                         <span
-                          className="tl-act-dot tl-mobile-dot"
+                          className={`tl-act-dot tl-mobile-dot${readOnly ? "" : " tl-dot-clickable"}`}
                           style={dotStyle(task.status)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            cycleStatus(task);
+                          }}
                         />
                         {task.name}
                       </td>

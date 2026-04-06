@@ -7,6 +7,7 @@ import { generateSlug } from "@/lib/timelines";
 import { Timeline } from "./Timeline";
 import { ShareToggle } from "./ShareToggle";
 import type { Task, Timeline as TimelineType, TimelineFilters } from "@/lib/types";
+import "@/styles/timeline.css";
 
 interface TimelineViewProps {
   timeline: TimelineType;
@@ -110,9 +111,9 @@ export function TimelineView({ timeline, tasks, projectSlug, allGroups = [] }: T
   );
 
   const editableHeader = (
-    <div style={editAreaStyle}>
+    <div className="tl-edit-area">
       {/* Editable name */}
-      <div style={nameRowStyle}>
+      <div className="tl-edit-name-row">
         {editingName ? (
           <input
             ref={nameInputRef}
@@ -126,32 +127,29 @@ export function TimelineView({ timeline, tasks, projectSlug, allGroups = [] }: T
                 setEditingName(false);
               }
             }}
-            style={nameInputStyle}
+            className="tl-edit-name-input"
             autoFocus
           />
         ) : (
           <button
             onClick={() => setEditingName(true)}
-            style={nameDisplayStyle}
+            className="tl-edit-name-btn"
             title="Clique para editar o nome"
           >
             {tlName}
-            <span style={editIconStyle}>✎</span>
+            <span className="tl-edit-icon">✎</span>
           </button>
         )}
       </div>
 
       {/* Filter chips */}
-      <div style={filterBarStyle}>
-        <span style={filterLabelStyle}>Filtrar:</span>
+      <div className="tl-edit-filters">
+        <span className="tl-edit-filter-label">Filtrar:</span>
         {availableGroups.map((g) => (
           <button
             key={g}
             onClick={() => toggleGroup(g)}
-            style={{
-              ...chipStyle,
-              ...(activeGroups.includes(g) ? chipActiveStyle : {}),
-            }}
+            className={`tl-edit-chip${activeGroups.includes(g) ? " tl-edit-chip-active" : ""}`}
           >
             {g}
           </button>
@@ -161,13 +159,13 @@ export function TimelineView({ timeline, tasks, projectSlug, allGroups = [] }: T
             e.preventDefault();
             addGroup();
           }}
-          style={addGroupFormStyle}
+          className="tl-edit-add-form"
         >
           <input
             value={newGroup}
             onChange={(e) => setNewGroup(e.target.value)}
             placeholder="+ adicionar grupo"
-            style={addGroupInputStyle}
+            className="tl-edit-add-input"
           />
         </form>
       </div>
@@ -188,112 +186,7 @@ export function TimelineView({ timeline, tasks, projectSlug, allGroups = [] }: T
   );
 }
 
-// ── Styles ──────────────────────────────────────────────
-
-const editAreaStyle: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: 10,
-  padding: "16px 40px 0",
-};
-
-const nameRowStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-};
-
-const nameDisplayStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-  background: "none",
-  border: "none",
-  fontSize: 12,
-  fontWeight: 500,
-  letterSpacing: "0.2em",
-  textTransform: "uppercase",
-  color: "var(--dark)",
-  cursor: "pointer",
-  padding: 0,
-  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-};
-
-const editIconStyle: React.CSSProperties = {
-  fontSize: 12,
-  color: "var(--stone)",
-  opacity: 0.4,
-};
-
-const nameInputStyle: React.CSSProperties = {
-  fontSize: 12,
-  fontWeight: 500,
-  letterSpacing: "0.2em",
-  textTransform: "uppercase",
-  color: "var(--dark)",
-  border: "none",
-  borderBottom: "1px solid var(--sand)",
-  background: "transparent",
-  padding: "2px 0",
-  outline: "none",
-  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-  minWidth: 200,
-};
-
-const filterBarStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 6,
-  flexWrap: "wrap",
-};
-
-const filterLabelStyle: React.CSSProperties = {
-  fontSize: 9,
-  fontWeight: 300,
-  letterSpacing: "0.14em",
-  textTransform: "uppercase",
-  color: "var(--stone)",
-  marginRight: 4,
-};
-
-const chipStyle: React.CSSProperties = {
-  padding: "4px 10px",
-  border: "1px solid var(--sand)",
-  borderRadius: 20,
-  background: "transparent",
-  fontSize: 9,
-  fontWeight: 400,
-  letterSpacing: "0.12em",
-  textTransform: "uppercase",
-  color: "var(--stone)",
-  cursor: "pointer",
-  transition: "all 0.15s ease",
-  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-};
-
-const chipActiveStyle: React.CSSProperties = {
-  background: "var(--dark)",
-  color: "var(--cream)",
-  borderColor: "var(--dark)",
-};
-
-const addGroupFormStyle: React.CSSProperties = {
-  display: "inline-flex",
-};
-
-const addGroupInputStyle: React.CSSProperties = {
-  padding: "4px 10px",
-  border: "1px dashed var(--sand)",
-  borderRadius: 20,
-  background: "transparent",
-  fontSize: 9,
-  fontWeight: 400,
-  letterSpacing: "0.12em",
-  textTransform: "uppercase",
-  color: "var(--stone)",
-  outline: "none",
-  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-  width: 130,
-};
+// Styles kept in timeline.css (.tl-edit-* classes)
 
 const deleteBtnStyle: React.CSSProperties = {
   padding: "5px 14px",
