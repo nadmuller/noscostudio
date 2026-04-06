@@ -13,22 +13,17 @@ export default async function ProjectLayout({
   const { slug } = await params;
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Fetch the project
-  const { data: project } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("slug", slug)
-    .single();
+  // Run auth + project fetch in parallel
+  const [{ data: { user } }, { data: project }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("projects").select("*").eq("slug", slug).single(),
+  ]);
 
   if (!project) notFound();
 
   const proj = project as Project;
 
-  // Fetch timelines for this project
+  // Fetch timelines
   const { data: timelines } = await supabase
     .from("timelines")
     .select("*")

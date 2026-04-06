@@ -12,7 +12,7 @@ export default async function ProjectTimelinePage({
   const { slug, tslug } = await params;
   const supabase = await createClient();
 
-  // Fetch the timeline record
+  // Fetch timeline record
   const { data: timeline } = await supabase
     .from("timelines")
     .select("*")
@@ -23,22 +23,26 @@ export default async function ProjectTimelinePage({
 
   const tl = timeline as TimelineType;
 
-  // Build filtered tasks query (scoped to the timeline's project)
-  let query = supabase
-    .from("tasks")
-    .select("*")
-    .eq("project_id", tl.project_id)
-    .order("due_date", { ascending: true });
+  // Run both queries in parallel
+  const filteredQuery = applyFilters(
+    supabase
+      .from("tasks")
+      .select("*")
+      .eq("project_id", tl.project_id)
+      .order("due_date", { ascending: true }),
+    tl.filters
+  );
 
-  query = applyFilters(query, tl.filters);
-
-  const { data: tasks } = await query;
-
-  // Fetch ALL groups from project (for the filter editor)
-  const { data: allProjectTasks } = await supabase
+  const allGroupsQuery = supabase
     .from("tasks")
     .select("group_name")
     .eq("project_id", tl.project_id);
+
+  const [{ data: tasks }, { data: allProjectTasks }] = await Promise.all([
+    filteredQuery,
+    allGroupsQuery,
+  ]);
+
   const allGroups = [
     ...new Set((allProjectTasks || []).map((t: { group_name: string }) => t.group_name)),
   ].sort();

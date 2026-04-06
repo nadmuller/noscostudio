@@ -11,22 +11,17 @@ export default async function ProjectDashboardPage({
   const { slug } = await params;
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Fetch the project
-  const { data: project } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("slug", slug)
-    .single();
+  // Run auth + project in parallel
+  const [{ data: { user } }, { data: project }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("projects").select("*").eq("slug", slug).single(),
+  ]);
 
   if (!project) notFound();
 
   const proj = project as Project;
 
-  // Fetch tasks for this project
+  // Fetch tasks
   const { data: tasks } = await supabase
     .from("tasks")
     .select("*")
