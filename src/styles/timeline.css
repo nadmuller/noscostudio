@@ -10,7 +10,7 @@
 /* ── HEADER ────────────────────────────────────────────── */
 .tl-header {
   flex-shrink: 0;
-  padding: 32px 40px 24px;
+  padding: 12px 40px 16px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;

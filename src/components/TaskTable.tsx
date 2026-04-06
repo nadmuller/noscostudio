@@ -271,6 +271,7 @@ function statusBtnStyle(status: string): React.CSSProperties {
     cursor: "pointer",
     padding: "2px 0",
     fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+    whiteSpace: "nowrap",
   };
 }
 
