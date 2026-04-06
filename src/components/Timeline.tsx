@@ -86,9 +86,7 @@ export function Timeline({
   const mm = String(today.getMonth() + 1).padStart(2, "0");
   const yyyy = today.getFullYear();
 
-  const title = timelineName
-    ? `${timelineName} — Cronograma`
-    : "Ortus — Cronograma de Lançamento";
+  const showTitle = readOnly && timelineName;
 
   // Group tasks by group_name for the activity list
   const grouped = tasks.reduce<Record<string, Task[]>>((acc, task) => {
@@ -101,7 +99,7 @@ export function Timeline({
     <div className="tl-page">
       <header className="tl-header">
         <div>
-          <h1>{title}</h1>
+          {showTitle && <h1>{timelineName}</h1>}
           <div className="sub">
             {tasks.length} tarefas · Atualizado em {dd}/{mm}/{yyyy}
           </div>
