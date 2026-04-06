@@ -60,7 +60,16 @@ export function Navbar({
               ...(pathname === base ? activeTabStyle : {}),
             }}
           >
-            Painel
+            Tarefas
+          </Link>
+          <Link
+            href={`${base}/orcamento`}
+            style={{
+              ...tabStyle,
+              ...(pathname === `${base}/orcamento` ? activeTabStyle : {}),
+            }}
+          >
+            Orçamento
           </Link>
           {timelines.map((tl) => (
             <Link

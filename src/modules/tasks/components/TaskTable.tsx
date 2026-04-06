@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { TaskEditor } from "./TaskEditor";
-import type { Task } from "@/lib/types";
+import type { Task } from "../types";
 
 interface TaskTableProps {
   tasks: Task[];

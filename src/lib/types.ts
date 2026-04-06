@@ -7,18 +7,7 @@ export interface Project {
   updated_at?: string;
 }
 
-export interface Task {
-  id: string;
-  project_id: string;
-  group_name: string;
-  name: string;
-  due_date: string;
-  return_date?: string | null;
-  status: "done" | "progress" | "pending";
-  sort_order: number;
-  created_at?: string;
-  updated_at?: string;
-}
+export type { Task } from "@/modules/tasks/types";
 
 export interface AllowedUser {
   id: string;

@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { generateSlug } from "@/lib/timelines";
-import { TaskTable } from "./TaskTable";
+import { TaskTable } from "@/modules/tasks/components/TaskTable";
 import { CreateTimelineModal } from "./CreateTimelineModal";
 import type { Task, Timeline, Panel } from "@/lib/types";
 

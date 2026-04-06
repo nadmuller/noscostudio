@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Task } from "@/lib/types";
+import type { Task } from "../types";
 
 interface TaskEditorProps {
   task: Task | null;

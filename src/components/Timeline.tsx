@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback, useState, type ReactNode } from "react";
 import { renderTimeline } from "@/lib/timeline/renderer";
 import { createClient } from "@/lib/supabase/client";
-import { TaskEditor } from "./TaskEditor";
+import { TaskEditor } from "@/modules/tasks/components/TaskEditor";
 import type { Task } from "@/lib/types";
 import "@/styles/timeline.css";
 
