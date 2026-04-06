@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Navbar } from "@/components/Navbar";
 import { notFound } from "next/navigation";
-import type { Timeline, Project } from "@/lib/types";
+import type { Timeline, Project, Panel } from "@/lib/types";
 
 export default async function ProjectLayout({
   children,
@@ -28,9 +28,15 @@ export default async function ProjectLayout({
 
   const proj = project as Project;
 
-  // Fetch timelines for this project
+  // Fetch timelines and panels for this project
   const { data: timelines } = await supabase
     .from("timelines")
+    .select("*")
+    .eq("project_id", proj.id)
+    .order("sort_order", { ascending: true });
+
+  const { data: panels } = await supabase
+    .from("panels")
     .select("*")
     .eq("project_id", proj.id)
     .order("sort_order", { ascending: true });
@@ -39,6 +45,7 @@ export default async function ProjectLayout({
     <>
       <Navbar
         timelines={(timelines as Timeline[]) || []}
+        panels={(panels as Panel[]) || []}
         userEmail={user?.email || ""}
         projectName={proj.name}
         projectSlug={proj.slug}

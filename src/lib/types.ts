@@ -46,3 +46,19 @@ export interface Timeline {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface PanelFilters {
+  group_names?: string[];
+}
+
+export interface Panel {
+  id: string;
+  project_id: string;
+  name: string;
+  slug: string;
+  filters: PanelFilters;
+  owner_email: string;
+  sort_order: number;
+  created_at?: string;
+  updated_at?: string;
+}

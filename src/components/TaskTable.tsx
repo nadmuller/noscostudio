@@ -8,6 +8,7 @@ import type { Task } from "@/lib/types";
 interface TaskTableProps {
   tasks: Task[];
   projectId: string;
+  panelGroupFilter?: string[];
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -16,7 +17,7 @@ const STATUS_LABELS: Record<string, string> = {
   pending: "Não iniciado",
 };
 
-export function TaskTable({ tasks: initialTasks, projectId }: TaskTableProps) {
+export function TaskTable({ tasks: initialTasks, projectId, panelGroupFilter }: TaskTableProps) {
   const [tasks, setTasks] = useState(initialTasks);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isAdding, setIsAdding] = useState(false);
