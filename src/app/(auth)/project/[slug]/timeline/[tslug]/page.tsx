@@ -34,5 +34,21 @@ export default async function ProjectTimelinePage({
 
   const { data: tasks } = await query;
 
-  return <TimelineView timeline={tl} tasks={(tasks as Task[]) || []} projectSlug={slug} />;
+  // Fetch ALL groups from project (for the filter editor)
+  const { data: allProjectTasks } = await supabase
+    .from("tasks")
+    .select("group_name")
+    .eq("project_id", tl.project_id);
+  const allGroups = [
+    ...new Set((allProjectTasks || []).map((t: { group_name: string }) => t.group_name)),
+  ].sort();
+
+  return (
+    <TimelineView
+      timeline={tl}
+      tasks={(tasks as Task[]) || []}
+      projectSlug={slug}
+      allGroups={allGroups}
+    />
+  );
 }

@@ -4,12 +4,11 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ProfileDropdown } from "./ProfileDropdown";
-import type { Timeline, Panel } from "@/lib/types";
+import type { Timeline } from "@/lib/types";
 import { useState } from "react";
 
 interface NavbarProps {
   timelines: Timeline[];
-  panels: Panel[];
   userEmail: string;
   projectName: string;
   projectSlug: string;
@@ -17,7 +16,6 @@ interface NavbarProps {
 
 export function Navbar({
   timelines: initialTimelines,
-  panels: initialPanels,
   userEmail,
   projectName,
   projectSlug,
@@ -25,7 +23,6 @@ export function Navbar({
   const pathname = usePathname();
   const router = useRouter();
   const [timelines, setTimelines] = useState(initialTimelines);
-  const [panels, setPanels] = useState(initialPanels);
 
   const base = `/project/${projectSlug}`;
 
@@ -43,19 +40,6 @@ export function Navbar({
     }
   };
 
-  const deletePanel = async (e: React.MouseEvent, pnl: Panel) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!confirm(`Excluir o painel "${pnl.name}"?`)) return;
-    const supabase = createClient();
-    const { error } = await supabase.from("panels").delete().eq("id", pnl.id);
-    if (!error) {
-      setPanels((prev) => prev.filter((p) => p.id !== pnl.id));
-      if (pathname === `${base}/panel/${pnl.slug}`) {
-        router.push(base);
-      }
-    }
-  };
 
   return (
     <nav style={navStyle}>
@@ -78,36 +62,6 @@ export function Navbar({
           >
             Painel
           </Link>
-          {panels.map((pnl) => (
-            <div key={pnl.id} style={tabWrapStyle}>
-              <Link
-                href={`${base}/panel/${pnl.slug}`}
-                style={{
-                  ...tabStyle,
-                  ...(pathname === `${base}/panel/${pnl.slug}`
-                    ? activeTabStyle
-                    : {}),
-                }}
-              >
-                {pnl.name}
-              </Link>
-              <button
-                onClick={(e) => deletePanel(e, pnl)}
-                style={tabDeleteStyle}
-                title="Excluir painel"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.opacity = "1";
-                  e.currentTarget.style.color = "#c0392b";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.opacity = "0.4";
-                  e.currentTarget.style.color = "var(--stone)";
-                }}
-              >
-                ×
-              </button>
-            </div>
-          ))}
           {timelines.map((tl) => (
             <div key={tl.id} style={tabWrapStyle}>
               <Link
