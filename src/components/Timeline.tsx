@@ -167,29 +167,25 @@ export function Timeline({
             <table className="tl-act-table">
               <thead>
                 <tr>
-                  <th className="tl-th-status">Status</th>
                   <th className="tl-th-name">Tarefa</th>
                   <th className="tl-th-date">Entrega</th>
                   <th className="tl-th-date">Retorno</th>
+                  <th className="tl-th-status">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {groupTasks
                   .sort((a, b) => a.due_date.localeCompare(b.due_date))
                   .map((task) => (
-                    <tr key={task.id}>
-                      <td
-                        className={`tl-td-status${readOnly ? "" : " tl-td-clickable"}`}
-                        onClick={() => cycleStatus(task)}
-                      >
-                        <span
-                          className="tl-act-dot"
-                          style={dotStyle(task.status)}
-                        />
-                        <span className="tl-act-status-text">
-                          {STATUS_LABELS[task.status]}
-                        </span>
-                      </td>
+                    <tr
+                      key={task.id}
+                      className={readOnly ? "" : "tl-tr-clickable"}
+                      onClick={() => {
+                        if (readOnly) return;
+                        setEditingTask(task);
+                        setIsAdding(false);
+                      }}
+                    >
                       <td className="tl-td-name">
                         <span
                           className={`tl-act-dot tl-mobile-dot${readOnly ? "" : " tl-dot-clickable"}`}
@@ -208,6 +204,21 @@ export function Timeline({
                         {task.return_date
                           ? formatDate(task.return_date)
                           : "—"}
+                      </td>
+                      <td
+                        className={`tl-td-status${readOnly ? "" : " tl-td-clickable"}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          cycleStatus(task);
+                        }}
+                      >
+                        <span
+                          className="tl-act-dot"
+                          style={dotStyle(task.status)}
+                        />
+                        <span className="tl-act-status-text">
+                          {STATUS_LABELS[task.status]}
+                        </span>
                       </td>
                     </tr>
                   ))}

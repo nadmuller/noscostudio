@@ -345,9 +345,9 @@
   border-bottom: 1px solid var(--sand);
 }
 
-.tl-th-status { width: 15%; }
 .tl-th-name { width: 45%; }
 .tl-th-date { width: 10%; }
+.tl-th-status { width: 15%; }
 
 .tl-td-status {
   white-space: nowrap;
@@ -390,13 +390,21 @@
   vertical-align: middle;
 }
 
+.tl-tr-clickable {
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+.tl-tr-clickable:hover {
+  background: #f0efed;
+}
+
 .tl-td-clickable {
   cursor: pointer;
   user-select: none;
   transition: background 0.1s ease;
 }
 .tl-td-clickable:hover {
-  background: #f0efed;
+  background: #e8e6e4;
 }
 
 .tl-dot-clickable {
