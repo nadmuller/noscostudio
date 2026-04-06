@@ -63,34 +63,18 @@ export function Navbar({
             Painel
           </Link>
           {timelines.map((tl) => (
-            <div key={tl.id} style={tabWrapStyle}>
-              <Link
-                href={`${base}/timeline/${tl.slug}`}
-                style={{
-                  ...tabStyle,
-                  ...(pathname === `${base}/timeline/${tl.slug}`
-                    ? activeTabStyle
-                    : {}),
-                }}
-              >
-                {tl.name}
-              </Link>
-              <button
-                onClick={(e) => deleteTimeline(e, tl)}
-                style={tabDeleteStyle}
-                title="Excluir timeline"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.opacity = "1";
-                  e.currentTarget.style.color = "#c0392b";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.opacity = "0.4";
-                  e.currentTarget.style.color = "var(--stone)";
-                }}
-              >
-                ×
-              </button>
-            </div>
+            <Link
+              key={tl.id}
+              href={`${base}/timeline/${tl.slug}`}
+              style={{
+                ...tabStyle,
+                ...(pathname === `${base}/timeline/${tl.slug}`
+                  ? activeTabStyle
+                  : {}),
+              }}
+            >
+              {tl.name}
+            </Link>
           ))}
         </div>
       </div>
