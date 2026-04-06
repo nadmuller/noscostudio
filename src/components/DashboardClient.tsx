@@ -29,15 +29,15 @@ export function DashboardClient({
     router.push(`/project/${projectSlug}/timeline/${timeline.slug}`);
   };
 
+  const extraButton = (
+    <button onClick={() => setShowCreate(true)} style={newTlBtnStyle}>
+      + Nova Timeline
+    </button>
+  );
+
   return (
     <>
-      <div style={topBarStyle}>
-        <div />
-        <button onClick={() => setShowCreate(true)} style={newTlBtnStyle}>
-          + Nova Timeline
-        </button>
-      </div>
-      <TaskTable tasks={tasks} projectId={projectId} />
+      <TaskTable tasks={tasks} projectId={projectId} extraHeaderButton={extraButton} />
       {showCreate && (
         <CreateTimelineModal
           existingGroups={existingGroups}
@@ -51,20 +51,14 @@ export function DashboardClient({
   );
 }
 
-const topBarStyle: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "flex-end",
-  padding: "12px 40px 0",
-};
-
 const newTlBtnStyle: React.CSSProperties = {
-  padding: "6px 16px",
+  padding: "8px 20px",
   background: "transparent",
   border: "1px solid var(--sand)",
   borderRadius: 4,
   fontSize: 9,
   fontWeight: 400,
-  letterSpacing: "0.14em",
+  letterSpacing: "0.18em",
   textTransform: "uppercase",
   color: "var(--stone)",
   cursor: "pointer",

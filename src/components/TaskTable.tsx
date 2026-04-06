@@ -9,6 +9,7 @@ interface TaskTableProps {
   tasks: Task[];
   projectId: string;
   panelGroupFilter?: string[];
+  extraHeaderButton?: React.ReactNode;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -17,7 +18,7 @@ const STATUS_LABELS: Record<string, string> = {
   pending: "Não iniciado",
 };
 
-export function TaskTable({ tasks: initialTasks, projectId, panelGroupFilter }: TaskTableProps) {
+export function TaskTable({ tasks: initialTasks, projectId, panelGroupFilter, extraHeaderButton }: TaskTableProps) {
   const [tasks, setTasks] = useState(initialTasks);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -67,15 +68,18 @@ export function TaskTable({ tasks: initialTasks, projectId, panelGroupFilter }: 
           <h1 style={titleStyle}>Tarefas</h1>
           <p style={subtitleStyle}>{tasks.length} tarefas cadastradas</p>
         </div>
-        <button
-          onClick={() => {
-            setIsAdding(true);
-            setEditingTask(null);
-          }}
-          style={addBtnStyle}
-        >
-          + Nova tarefa
-        </button>
+        <div style={headerBtnsStyle}>
+          {extraHeaderButton}
+          <button
+            onClick={() => {
+              setIsAdding(true);
+              setEditingTask(null);
+            }}
+            style={addBtnStyle}
+          >
+            + Nova tarefa
+          </button>
+        </div>
       </div>
 
       <div style={tableWrapStyle}>
@@ -174,6 +178,12 @@ const headerStyle: React.CSSProperties = {
   justifyContent: "space-between",
   alignItems: "flex-end",
   marginBottom: 28,
+};
+
+const headerBtnsStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
 };
 
 const titleStyle: React.CSSProperties = {

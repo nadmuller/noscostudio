@@ -160,7 +160,7 @@ export function Timeline({
 
       {/* Activity table below timeline */}
       <div className="tl-activities">
-        <h2>Atividades</h2>
+        <h2>Tarefas</h2>
         {Object.entries(grouped).map(([group, groupTasks]) => (
           <div key={group} className="tl-act-group">
             <div className="tl-act-group-name">{group}</div>
