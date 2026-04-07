@@ -46,42 +46,33 @@ export function ProjectNavbar({
         <Link href={base} style={projectNameStyle}>
           {projectName}
         </Link>
-        {!isModulesPage && (
+        {isCronograma && (
           <>
             <div style={dividerStyle} />
             <div style={tabsStyle}>
-              {modules.map((mod) => (
+              <Link
+                href={`${base}/cronograma`}
+                style={{
+                  ...tabStyle,
+                  ...(pathname === `${base}/cronograma` ? activeTabStyle : {}),
+                }}
+              >
+                Painel
+              </Link>
+              {timelines.map((tl) => (
                 <Link
-                  key={mod.name}
-                  href={mod.href}
+                  key={tl.id}
+                  href={`${base}/timeline/${tl.slug}`}
                   style={{
                     ...tabStyle,
-                    ...(mod.active ? activeTabStyle : {}),
+                    ...(pathname === `${base}/timeline/${tl.slug}`
+                      ? activeTabStyle
+                      : {}),
                   }}
                 >
-                  {mod.name}
+                  {tl.name}
                 </Link>
               ))}
-              {/* Timeline tabs inside Cronograma */}
-              {isCronograma && timelines.length > 0 && (
-                <>
-                  <div style={tabDividerStyle} />
-                  {timelines.map((tl) => (
-                    <Link
-                      key={tl.id}
-                      href={`${base}/timeline/${tl.slug}`}
-                      style={{
-                        ...tabStyle,
-                        ...(pathname === `${base}/timeline/${tl.slug}`
-                          ? activeTabStyle
-                          : {}),
-                      }}
-                    >
-                      {tl.name}
-                    </Link>
-                  ))}
-                </>
-              )}
             </div>
           </>
         )}
