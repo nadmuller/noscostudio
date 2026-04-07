@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { generateSlug } from "@/lib/timelines";
@@ -24,12 +24,26 @@ export function TimelineView({ timeline, tasks, projectSlug, allGroups = [] }: T
     timeline.filters.group_names || []
   );
   const [newGroup, setNewGroup] = useState("");
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const filterPopupRef = useRef<HTMLDivElement>(null);
 
   // Merge all groups from tasks + groups already in the filter
   const availableGroups = [
     ...new Set([...allGroups, ...activeGroups]),
   ].sort();
+
+  // Close popup on click outside
+  useEffect(() => {
+    if (!showFilterPopup) return;
+    const handler = (e: MouseEvent) => {
+      if (filterPopupRef.current && !filterPopupRef.current.contains(e.target as Node)) {
+        setShowFilterPopup(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showFilterPopup]);
 
   const handleDeleteTimeline = async () => {
     if (!confirm(`Excluir a timeline "${timeline.name}"? Esta ação não pode ser desfeita.`)) return;
@@ -142,32 +156,59 @@ export function TimelineView({ timeline, tasks, projectSlug, allGroups = [] }: T
         )}
       </div>
 
-      {/* Filter chips */}
+      {/* Filter bar: active badges + filter button */}
       <div className="tl-edit-filters">
-        <span className="tl-edit-filter-label">Filtrar:</span>
-        {availableGroups.map((g) => (
+        <div style={{ position: "relative" }} ref={filterPopupRef}>
           <button
-            key={g}
-            onClick={() => toggleGroup(g)}
-            className={`tl-edit-chip${activeGroups.includes(g) ? " tl-edit-chip-active" : ""}`}
+            onClick={() => setShowFilterPopup(!showFilterPopup)}
+            className="tl-edit-filter-btn"
           >
-            {g}
+            Filtrar
           </button>
+
+          {showFilterPopup && (
+            <div className="tl-filter-popup">
+              <div className="tl-filter-popup-title">Selecionar grupos</div>
+              <div className="tl-filter-popup-list">
+                {availableGroups.map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => toggleGroup(g)}
+                    className={`tl-filter-popup-item${activeGroups.includes(g) ? " tl-filter-popup-item-active" : ""}`}
+                  >
+                    <span className={`tl-filter-popup-check${activeGroups.includes(g) ? " tl-filter-popup-check-active" : ""}`}>
+                      {activeGroups.includes(g) ? "✓" : ""}
+                    </span>
+                    {g}
+                  </button>
+                ))}
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  addGroup();
+                }}
+                className="tl-filter-popup-add"
+              >
+                <input
+                  value={newGroup}
+                  onChange={(e) => setNewGroup(e.target.value)}
+                  placeholder="+ adicionar grupo"
+                  className="tl-filter-popup-add-input"
+                />
+              </form>
+            </div>
+          )}
+        </div>
+
+        {activeGroups.length > 0 && activeGroups.map((g) => (
+          <span key={g} className="tl-edit-chip tl-edit-chip-active">
+            {g}
+          </span>
         ))}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            addGroup();
-          }}
-          className="tl-edit-add-form"
-        >
-          <input
-            value={newGroup}
-            onChange={(e) => setNewGroup(e.target.value)}
-            placeholder="+ adicionar grupo"
-            className="tl-edit-add-input"
-          />
-        </form>
+        {activeGroups.length === 0 && (
+          <span className="tl-edit-filter-label">Todos os grupos</span>
+        )}
       </div>
     </div>
   );
