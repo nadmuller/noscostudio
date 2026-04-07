@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { ProjectNavbar } from "@/components/ProjectNavbar";
 import { notFound } from "next/navigation";
-import type { Project } from "@/lib/types";
+import type { Project, Timeline } from "@/lib/types";
 
 export default async function ProjectLayout({
   children,
@@ -22,12 +22,19 @@ export default async function ProjectLayout({
 
   const proj = project as Project;
 
+  const { data: timelines } = await supabase
+    .from("timelines")
+    .select("*")
+    .eq("project_id", proj.id)
+    .order("sort_order", { ascending: true });
+
   return (
     <>
       <ProjectNavbar
         userEmail={user?.email || ""}
         projectName={proj.name}
         projectSlug={proj.slug}
+        timelines={(timelines as Timeline[]) || []}
       />
       {children}
     </>

@@ -3,17 +3,20 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ProfileDropdown } from "./ProfileDropdown";
+import type { Timeline } from "@/lib/types";
 
 interface ProjectNavbarProps {
   userEmail: string;
   projectName: string;
   projectSlug: string;
+  timelines: Timeline[];
 }
 
 export function ProjectNavbar({
   userEmail,
   projectName,
   projectSlug,
+  timelines,
 }: ProjectNavbarProps) {
   const pathname = usePathname();
   const base = `/project/${projectSlug}`;
@@ -59,6 +62,26 @@ export function ProjectNavbar({
                   {mod.name}
                 </Link>
               ))}
+              {/* Timeline tabs inside Cronograma */}
+              {isCronograma && timelines.length > 0 && (
+                <>
+                  <div style={tabDividerStyle} />
+                  {timelines.map((tl) => (
+                    <Link
+                      key={tl.id}
+                      href={`${base}/timeline/${tl.slug}`}
+                      style={{
+                        ...tabStyle,
+                        ...(pathname === `${base}/timeline/${tl.slug}`
+                          ? activeTabStyle
+                          : {}),
+                      }}
+                    >
+                      {tl.name}
+                    </Link>
+                  ))}
+                </>
+              )}
             </div>
           </>
         )}
@@ -136,4 +159,11 @@ const activeTabStyle: React.CSSProperties = {
   color: "var(--dark)",
   background: "#e8e6e4",
   fontWeight: 500,
+};
+
+const tabDividerStyle: React.CSSProperties = {
+  width: 1,
+  height: 14,
+  background: "var(--sand)",
+  margin: "0 6px",
 };
