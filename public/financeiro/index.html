@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financeiro — Nosco Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Financeiro</h1>
+    <div class="mes-nav">
+      <button id="mes-anterior" aria-label="Mês anterior">&larr;</button>
+      <span id="mes-label"></span>
+      <button id="mes-proximo" aria-label="Próximo mês">&rarr;</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Receita -->
+    <section class="card receita-card">
+      <h2>Receita mensal</h2>
+      <div class="receita-input-wrap">
+        <span>R$</span>
+        <input type="number" id="receita-input" min="0" step="0.01" placeholder="0,00">
+      </div>
+    </section>
+
+    <!-- Resumo -->
+    <section class="card resumo-card">
+      <h2>Resumo do mês</h2>
+      <div class="resumo-grid">
+        <div class="resumo-item">
+          <span class="resumo-label">Fixos</span>
+          <span class="resumo-valor" id="total-fixos">R$ 0,00</span>
+        </div>
+        <div class="resumo-item">
+          <span class="resumo-label">Crédito</span>
+          <span class="resumo-valor" id="total-credito">R$ 0,00</span>
+        </div>
+        <div class="resumo-item">
+          <span class="resumo-label">Investimentos</span>
+          <span class="resumo-valor" id="total-investimentos">R$ 0,00</span>
+        </div>
+        <div class="resumo-item destaque">
+          <span class="resumo-label">Saldo disponível</span>
+          <span class="resumo-valor" id="saldo-disponivel">R$ 0,00</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Patrimônio -->
+    <section class="card patrimonio-card">
+      <h2>Patrimônio acumulado</h2>
+      <p class="patrimonio-valor" id="patrimonio-total">R$ 0,00</p>
+    </section>
+
+    <!-- Formulário -->
+    <section class="card form-card">
+      <h2>Novo lançamento</h2>
+      <form id="form-lancamento">
+        <input type="text" id="input-descricao" placeholder="Descrição" required>
+        <input type="number" id="input-valor" placeholder="Valor" min="0" step="0.01" required>
+        <select id="input-categoria" required>
+          <option value="" disabled selected>Categoria</option>
+          <option value="fixo">Fixo</option>
+          <option value="credito">Crédito</option>
+          <option value="investimento">Investimento</option>
+        </select>
+        <button type="submit">Adicionar</button>
+      </form>
+    </section>
+
+    <!-- Lançamentos Fixos -->
+    <section class="card">
+      <h2>Fixos</h2>
+      <ul id="lista-fixos" class="lista-lancamentos"></ul>
+      <p class="lista-vazia" id="vazio-fixos">Nenhum lançamento fixo neste mês.</p>
+    </section>
+
+    <!-- Lançamentos Crédito -->
+    <section class="card">
+      <h2>Crédito</h2>
+      <ul id="lista-credito" class="lista-lancamentos"></ul>
+      <p class="lista-vazia" id="vazio-credito">Nenhum lançamento de crédito neste mês.</p>
+    </section>
+
+    <!-- Investimentos -->
+    <section class="card">
+      <h2>Investimentos</h2>
+      <ul id="lista-investimentos" class="lista-lancamentos"></ul>
+      <p class="lista-vazia" id="vazio-investimentos">Nenhum investimento neste mês.</p>
+    </section>
+  </main>
+
+  <!-- Ações -->
+  <footer>
+    <button id="btn-exportar">Exportar JSON</button>
+    <label class="btn-importar">
+      Importar JSON
+      <input type="file" id="input-importar" accept=".json" hidden>
+    </label>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
